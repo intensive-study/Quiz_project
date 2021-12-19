@@ -2,10 +2,10 @@ DROP TABLE IF EXISTS `USER_INFO`;
 
 CREATE TABLE `USER_INFO` (
                              `user_id`	varchar	NOT NULL,
-                             `user_name`	varchar	NULL,
-                             `password`	varchar	NULL,
-                             `resign`	boolean	NULL,
-                             `rank_score`	int	NULL,
+                             `user_name`	varchar	NOT NULL,
+                             `password`	varchar	NOT NULL,
+                             `activation`	boolean	NULL,
+                             `total_score`	int	NULL,
                              `register_date`	datetime	NULL
 );
 
@@ -14,38 +14,38 @@ DROP TABLE IF EXISTS `QUIZ_LIST`;
 CREATE TABLE `QUIZ_LIST` (
                              `quiz_num`	int	NOT NULL AUTO_INCREMENT PRIMARY KEY,
                              `category_num`	int	NOT NULL,
-                             `user_id`	char	NOT NULL,
+                             `user_id`	varchar	NOT NULL,
                              `quiz_score`	int	NULL,
-                             `answer_rate`	float	NULL,
-                             `trial_user_count`	int	NULL,
-                             `answer_user_count`	int	NULL
+                             `quiz_contents`	varchar	NULL,
+                             `quiz_answer`	varchar	NULL,
+                             `choice1`	varchar	NULL,
+                             `choice2`	varchar	NULL,
+                             `choice3`	varchar	NULL,
+                             `choice4`	varchar	NULL,
+                             `choice5`	varchar	NULL
 );
 
 DROP TABLE IF EXISTS `QUIZ_CATEGORY`;
 
 CREATE TABLE `QUIZ_CATEGORY` (
                                  `category_num`	int	NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                 `category_name` char NOT NULL
+                                 `category_name` varchar NOT NULL
 );
 
 DROP TABLE IF EXISTS `QUIZ_DETAIL`;
 
 CREATE TABLE `QUIZ_DETAIL` (
                                `quiz_num`	int	NOT NULL,
-                               `quiz_contents`	varchar	NULL,
-                               `choice1`	varchar	NULL,
-                               `choice2`	varchar	NULL,
-                               `choice3`	varchar	NULL,
-                               `choice4`	varchar	NULL,
-                               `choice5`	varchar	NULL,
-                               `quiz_answer`	varchar	NULL
+                               `answer_rate`	float	NULL,
+                               `trial_user_count`	int	NULL,
+                               `answer_user_count`	int	NULL
 );
 
 DROP TABLE IF EXISTS `USER_QUIZ_HISTORY`;
 
 CREATE TABLE `USER_QUIZ_HISTORY` (
                                      `quiz_num`	int	NOT NULL,
-                                     `user_id`	char	NOT NULL,
+                                     `user_id`	varchar	NOT NULL,
                                      `trial_count`	int	NULL,
                                      `solve_time`	datetime	NULL,
                                      `answer`	boolean	NULL

@@ -1,5 +1,6 @@
-package com.example.demo.quiz;
+package com.example.demo.dto;
 
+import com.example.demo.entity.QuizEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,11 +13,15 @@ public class QuizDto {
     private Integer categoryNum;
     private String userId;
     private Integer quizScore;
-    private Integer answerRate;
-    private Integer trialUserCount;
-    private Integer answerUserCount;
+    private String quizContents;
+    private String quizAnswer;
+    private String choice1;
+    private String choice2;
+    private String choice3;
+    private String choice4;
+    private String choice5;
 
-    public QuizDto(Quiz source){
+    public QuizDto(QuizEntity source){
         copyProperties(source, this);
     }
 }

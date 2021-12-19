@@ -1,7 +1,7 @@
 DELETE FROM USER_INFO ;
 
 INSERT INTO USER_INFO
-(user_id, user_name, password, resign, rank_score, register_date)
+(user_id, user_name, password, activation, total_score, register_date)
 VALUES
     ('user1', 'test', '12345', 'F', '100', '2021-12-17');
 
@@ -15,6 +15,6 @@ VALUES
 DELETE FROM QUIZ_LIST;
 
 INSERT INTO QUIZ_LIST
-(category_num, user_id, quiz_score, answer_rate, trial_user_count, answer_user_count)
+(`category_num`,user_id,quiz_score,quiz_contents,quiz_answer,choice1, choice2,choice3,choice4)
 VALUES
-    ('1', 'user1', 5, 0.5, 4, 2), ('1', 'user1', 3, 1, 2, 2);
+    ('4','user1', 5, 'question', 'choice2', '1번 보기내용', '2번 보기내용', '3번 보기내용', '4번 보기내용');

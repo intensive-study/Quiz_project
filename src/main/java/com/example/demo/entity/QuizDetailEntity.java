@@ -1,32 +1,22 @@
-package com.example.demo.quiz;
+package com.example.demo.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "QUIZ_LIST")
+@Table(name = "QUIZ_DETAIL")
 @Getter
 @NoArgsConstructor
-public class Quiz {
+public class QuizDetailEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "quiz_num")
     private Integer quizNum;
-
-    @Setter
-    @Column(name = "category_num")
-    private Integer categoryNum;
-
-    @Setter
-    @Column(name = "user_id")
-    private String userId;
-
-    @Setter
-    @Column(name = "quiz_score")
-    private Integer quizScore;
 
     @Setter
     @Column(name = "answer_rate")
@@ -40,6 +30,5 @@ public class Quiz {
     @Column(name = "answer_user_count")
     private Integer answerUserCount;
 
-    //생성자 필요하면 따로 생성
 
 }
