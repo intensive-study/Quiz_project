@@ -15,7 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name="users")
 public class UserEntity {
-
 //    @Id
 //    @Column(nullable = false, length = 50)
 //    private String email;
@@ -26,12 +25,10 @@ public class UserEntity {
     private String name;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
-    @ColumnDefault(value="T")
+//    @ColumnDefault(value="T")
     private String activation;
-    @Column(nullable = true)
-    private Integer score;
-    @Column(nullable = false, updatable = false)
+    private Integer totalScore;
+    @Column(nullable = true, updatable = false)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private Date registerDate;
 

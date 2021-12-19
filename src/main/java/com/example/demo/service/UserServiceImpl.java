@@ -20,6 +20,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        UserEntity userEntity = mapper.map(userDto, UserEntity.class);
+
+        userRepository.save(userEntity);
         return null;
     }
 
