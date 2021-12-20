@@ -14,7 +14,6 @@ class QuizSettingServiceTest {
     QuizRepository quizRepository;
 //    quizRepository = new QuizRepository();
 
-    QuizService quizService = new QuizSettingServiceImpl(quizRepository);
 
     @Test
     void 문제출제확인(){
