@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,12 +18,14 @@ public class QuizEntity {
     private Integer quizNum;
 
     @Setter
-    @Column(name = "category_num")
-    private Integer categoryNum;
+    @ManyToOne
+    @JoinColumn(name = "category_num")
+    private CategoryEntity categoryEntity;
 
     @Setter
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
     @Setter
     @Column(name = "quiz_score")
@@ -31,6 +34,10 @@ public class QuizEntity {
     @Setter
     @Column(name = "quiz_contents")
     private String quizContents;
+
+    @Setter
+    @Column(name = "quiz_answer")
+    private String quizAnswer;
 
     @Setter
     private String choice1;
@@ -43,9 +50,6 @@ public class QuizEntity {
     @Setter
     private String choice5;
 
-    @Setter
-    @Column(name = "quiz_answer")
-    private String quizAnswer;
 
     //생성자 필요하면 따로 생성
 

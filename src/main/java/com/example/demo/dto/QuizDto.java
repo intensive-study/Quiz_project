@@ -1,17 +1,21 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.entity.UserEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class QuizDto {
     private Integer quizNum;
-    private Integer categoryNum;
-    private String userId;
+    private CategoryEntity categoryEntity;
+    private UserEntity userEntity;
     private Integer quizScore;
     private String quizContents;
     private String quizAnswer;

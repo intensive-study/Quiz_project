@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name="users")
+@Table(name="USER_INFO")
 public class UserEntity {
 //    @Id
 //    @Column(nullable = false, length = 50)
