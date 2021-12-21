@@ -1,22 +1,47 @@
+server:
+  port: 8080
+
+spring:
   application:
     name: quiz-service
 
-  datasource:
-#    driver-class-name: org.mariadb.jdbc.Driver
-#    url: jdbc:mariadb://rds-seoul-finalproject.c4zzcvkkrxzn.ap-northeast-2.rds.amazonaws.com:3306/tmax
-#    username: admin
-#    password: rnjswlsgml!
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:testdb
-      username: sa
-      password:
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: create-drop
-    generate-ddl: true
-    show-sql: true
-    h2:
-      console:
-        enabled: true
-        settings:
-          web-allow-others: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  datasource:
+    platform: h2
+    driver-class-name: org.h2.Driver
+    url: "jdbc:h2:mem:testdb;MODE=MYSQL;DB_CLOSE_DELAY=-1"
+    username: sa
+    password:
+
+# #현우님 application.xml
+#  datasource:
+#    #    driver-class-name: org.mariadb.jdbc.Driver
+#    #    url: jdbc:mariadb://rds-seoul-finalproject.c4zzcvkkrxzn.ap-northeast-2.rds.amazonaws.com:3306/tmax
+#    #    username: admin
+#    #    password: rnjswlsgml!
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#    jpa:
+#      hibernate:
+#        ddl-auto: create-drop
+#      generate-ddl: true
+#      show-sql: true
+#      h2:
+#        console:
+#          enabled: true
+#          settings:
+#            web-allow-others: true
