@@ -51,7 +51,7 @@ public class QuizController {
     }
 
     @GetMapping("/{quizNum}")
-    public ResponseEntity<ResponseUser> getQuiz(@PathVariable("quizNum") Integer quizNum){
+    public ResponseEntity<ResponseUser> getQuiz(@PathVariable("quizNum") Long quizNum){
 
         QuizDto quizDto = quizService.getQuizByQuizNum(quizNum);
         ResponseUser responseUser = new ModelMapper().map(quizDto, ResponseUser.class);
