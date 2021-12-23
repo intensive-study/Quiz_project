@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "QUIZ_CATEGORY")
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 public class CategoryEntity {
     @Id
@@ -16,7 +16,6 @@ public class CategoryEntity {
     @Column(name = "category_num")
     private Integer categoryNum;
 
-    @Setter
     @Column(name = "category_name")
     private String categoryName;
 }
