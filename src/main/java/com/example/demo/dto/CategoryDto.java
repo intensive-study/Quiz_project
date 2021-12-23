@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 import com.example.demo.entity.CategoryEntity;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +8,8 @@ import lombok.Setter;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class CategoryDto {
     private Integer categoryNum;

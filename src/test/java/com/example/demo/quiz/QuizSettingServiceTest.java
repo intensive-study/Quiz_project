@@ -1,19 +1,17 @@
 package com.example.demo.quiz;
 
 import com.example.demo.dto.CategoryDto;
+import com.example.demo.dto.QuizDetailDto;
 import com.example.demo.dto.QuizDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.CategoryEntity;
+import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
-import com.example.demo.jpa.QuizRepository;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.service.QuizService;
-import com.example.demo.service.QuizSettingServiceImpl;
 import com.example.demo.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,33 +25,117 @@ import static org.assertj.core.api.Assertions.*;
 class QuizSettingServiceTest {
 
     private final QuizService quizService;
+    private final UserService userService;
 
     @Autowired
-    public QuizSettingServiceTest(QuizSettingServiceImpl quizService) {
+    public QuizSettingServiceTest(QuizService quizService, UserService userService) {
         this.quizService = quizService;
+        this.userService = userService;
+    }
+
+    @Test
+    CategoryEntity 카테고리추가(){
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setCategoryName("운영체제");
+
+        CategoryEntity result = quizService.createQuizCategory(categoryDto);
+
+        List<CategoryEntity> categoryEntities = quizService.getCategoryByAll();
+
+        //방금 넣어준 데이터와 테이블에 마지막으로 들어간 데이터가 같은지 확인
+        assertThat(categoryEntities.get(categoryEntities.size()-1).getCategoryNum()).isEqualTo(result.getCategoryNum());
+        return categoryEntities.get(categoryEntities.size()-1);
+    }
+
+
+    void 사용자데이터추가(){
+
+        UserDto userDto = new UserDto();
+
+        userDto.setUserId("user2");
+        userDto.setName("user_name");
+        userDto.setPassword("!2342");
+
+        userService.createUser(userDto);
+
     }
 
     @Test
     void 문제출제확인(){
+
+        CategoryEntity categoryEntity = this.카테고리추가();
+        this.사용자데이터추가();
+        Iterable<UserEntity> userEntity = userService.getUsersByAll();
+
         QuizDto quizDto = new QuizDto();
-//        CategoryEntity category = new CategoryEntity();
-//        category.setCategoryName("aaa");
-//        quizDto.setCategoryNum(category);
-//        quizDto.setUserId("user1");
-        quizDto.setQuizScore(5);
+        quizDto.setCategoryEntity(categoryEntity);
+        quizDto.setUserEntity(userEntity.iterator().next());
         quizDto.setQuizContents("문제내용");
         quizDto.setQuizAnswer("choice3");
-        quizDto.setChoice1("보기 내용");
-        quizDto.setChoice2("보기 내용");
         quizDto.setChoice3("보기 내용");
 
-        quizService.createQuiz(quizDto);
         QuizEntity result = quizService.createQuiz(quizDto);
 
-        //테ce.createUser(userDto);
+        //들어간 값 확인
         List<QuizEntity> quizEntities = quizService.getQuizByAll();
+        List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
 
-        assertThat(quizEntities.size()).isEqualTo(result.getQuizNum());
+        System.out.println(quizEntities.get(quizEntities.size()-1).getQuizAnswer() +" "+ quizDetailEntities.get(quizDetailEntities.size()-1).getTrialUserCount());
+        System.out.println(quizEntities.size()+" "+quizDetailEntities.size());
+
+
+        //방금 넣어준 데이터와 테이블에 마지막으로 들어간 데이터가 같은지 확인
+        assertThat(quizEntities.get(quizEntities.size()-1).getQuizNum()).isEqualTo(result.getQuizNum());
+    }
+
+    @Test
+    void 문제변경확인(){
+        this.문제출제확인();
+
+        QuizDto quizDto = new QuizDto();
+        quizDto.setQuizNum(1);
+        quizDto.setQuizContents("문제내용");
+        quizDto.setQuizAnswer("choice1");
+        quizService.updateQuiz(quizDto);
+
+        List<QuizEntity> quizEntities = quizService.getQuizByAll();
+        List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
+
+        System.out.println(quizEntities.get(quizEntities.size()-1).getQuizAnswer() +" "+ quizDetailEntities.get(quizDetailEntities.size()-1).getQuizEntity().getQuizAnswer());
+        System.out.println(quizEntities.size()+" "+quizDetailEntities.size());
+
+    }
+
+    @Test
+    void 디테일변경확인(){
+
+        this.문제출제확인();
+
+        quizService.updateQuizDetailByQuizNum(1);
+
+        List<QuizEntity> quizEntities = quizService.getQuizByAll();
+        List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
+
+        System.out.println(quizEntities.get(quizEntities.size()-1).getQuizNum() +" "+ quizDetailEntities.get(quizDetailEntities.size()-1).getAnswerRate());
+        System.out.println(quizEntities.size()+" "+quizDetailEntities.size());
+
+        //방금 넣어준 데이터와 테이블에 마지막으로 들어간 데이터가 같은지 확인
+        assertThat(quizEntities.size()).isEqualTo(quizDetailEntities.size());
+    }
+
+    @Test
+    void 퀴즈삭제확인(){
+        this.문제출제확인();
+        QuizDto Q = quizService.getQuizByQuizNum(1);
+        System.out.println(Q.getQuizNum()+" "+Q.getQuizAnswer());
+
+        quizService.deleteQuiz(1);
+
+        List<QuizEntity> quizEntities = quizService.getQuizByAll();
+        List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
+
+        System.out.println(quizEntities.size()+" "+quizDetailEntities.size());
+        assertThat(quizEntities.size()).isEqualTo(quizDetailEntities.size());
     }
 
 }

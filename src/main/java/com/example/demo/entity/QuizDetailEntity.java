@@ -1,37 +1,39 @@
 package com.example.demo.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "QUIZ_DETAIL")
-@Data
+@Getter @Setter
 @NoArgsConstructor
+@DynamicInsert //insert시 값이 null이면 제외한다 -> default 설정값 넣어주기 위해 추가
 public class QuizDetailEntity {
 
     @Id
     @Column(name = "quiz_num")
-    private Long quizNum; //  값을 Long 형태로 바꿨습니다.
+    private Integer quizNum;
 
-    @OneToOne @MapsId
+    @MapsId
+    @OneToOne
     @JoinColumn(name = "quiz_num")
     private QuizEntity quizEntity;
 
-    @Setter
     @Column(name = "answer_rate")
+    @ColumnDefault("0")
     private Integer answerRate;
 
-    @Setter
     @Column(name = "trial_user_count")
+    @ColumnDefault("0")
     private Integer trialUserCount;
 
-    @Setter
     @Column(name = "answer_user_count")
+    @ColumnDefault("0")
     private Integer answerUserCount;
-
 
 }
