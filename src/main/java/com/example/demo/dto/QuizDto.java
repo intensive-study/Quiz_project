@@ -3,14 +3,14 @@ package com.example.demo.dto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizEntity;
 import com.example.demo.entity.UserEntity;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class QuizDto {
     private Integer quizNum;

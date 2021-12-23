@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,12 +9,13 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "QUIZ_DETAIL")
-@Getter
+@Data
 @NoArgsConstructor
 public class QuizDetailEntity {
+
     @Id
     @Column(name = "quiz_num")
-    private Integer quizNum;
+    private Long quizNum; //  값을 Long 형태로 바꿨습니다.
 
     @OneToOne @MapsId
     @JoinColumn(name = "quiz_num")
