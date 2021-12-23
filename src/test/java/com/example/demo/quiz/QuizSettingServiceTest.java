@@ -6,15 +6,19 @@ import com.example.demo.jpa.QuizRepository;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.QuizSettingServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.*;
 
 class QuizSettingServiceTest {
 
-    QuizRepository quizRepository;
-//    quizRepository = new QuizRepository();
+    private QuizRepository quizRepository;
+    private QuizService quizService;
 
-    QuizService quizService = new QuizSettingServiceImpl(quizRepository);
+    public QuizSettingServiceTest(QuizRepository quizRepository, QuizService quizService){
+        this.quizRepository = quizRepository;
+        this.quizService = quizService;
+    }
 
     @Test
     void 문제출제확인(){

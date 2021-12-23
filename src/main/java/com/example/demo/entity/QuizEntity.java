@@ -8,46 +8,42 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
+@Data
 @Table(name = "QUIZ_LIST")
-@Getter
 @NoArgsConstructor
 public class QuizEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "quiz_num")
-    private Integer quizNum;
+    private Long quizNum;
 
-    @Setter
+    @Column(name="category_num", insertable = false, updatable = false)
+    private Integer categoryNum;
+
+    @Column(name = "user_Id", insertable = false, updatable = false)
+    private String userId;
+
     @ManyToOne
     @JoinColumn(name = "category_num")
     private CategoryEntity categoryEntity;
 
-    @Setter
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @Setter
     @Column(name = "quiz_score")
     private Integer quizScore;
 
-    @Setter
     @Column(name = "quiz_contents")
     private String quizContents;
 
-    @Setter
     @Column(name = "quiz_answer")
     private String quizAnswer;
 
-    @Setter
     private String choice1;
-    @Setter
     private String choice2;
-    @Setter
     private String choice3;
-    @Setter
     private String choice4;
-    @Setter
     private String choice5;
 
 
