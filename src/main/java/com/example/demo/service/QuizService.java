@@ -22,14 +22,14 @@ public interface QuizService {
     //퀴즈 관련
     QuizEntity createQuiz(QuizDto quizDto);
     List<QuizEntity> getQuizByAll();
-    QuizDto getQuizByQuizNum(Integer quizNum);
+    QuizDto getQuizByQuizNum(Long quizNum);
     
     @Transactional
-    void deleteQuiz(Integer quizNum);
+    void deleteQuiz(Long quizNum);
     @Transactional
     QuizEntity updateQuiz(QuizDto quizDto);
     @Transactional
-    QuizDetailEntity updateQuizDetailByQuizNum(Integer quizNum);
+    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum);
 
 
     //필요없음

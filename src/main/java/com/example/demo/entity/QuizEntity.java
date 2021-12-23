@@ -16,7 +16,7 @@ public class QuizEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "quiz_num")
-    private Integer quizNum;
+    private Long quizNum;
 
     @OneToOne(mappedBy = "quizEntity", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn

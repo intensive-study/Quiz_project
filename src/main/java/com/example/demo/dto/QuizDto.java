@@ -14,7 +14,7 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @Setter
 @NoArgsConstructor
 public class QuizDto {
-    private Integer quizNum;
+    private Long quizNum;
     private QuizDetailEntity quizDetailEntity;
     private CategoryEntity categoryEntity;
     private UserEntity userEntity;

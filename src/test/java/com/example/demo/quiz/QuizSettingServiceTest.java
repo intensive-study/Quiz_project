@@ -1,7 +1,6 @@
 package com.example.demo.quiz;
 
 import com.example.demo.dto.CategoryDto;
-import com.example.demo.dto.QuizDetailDto;
 import com.example.demo.dto.QuizDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.CategoryEntity;
@@ -93,7 +92,7 @@ class QuizSettingServiceTest {
         this.문제출제확인();
 
         QuizDto quizDto = new QuizDto();
-        quizDto.setQuizNum(1);
+        quizDto.setQuizNum(Long.valueOf(1));
         quizDto.setQuizContents("문제내용");
         quizDto.setQuizAnswer("choice1");
         quizService.updateQuiz(quizDto);
@@ -111,7 +110,7 @@ class QuizSettingServiceTest {
 
         this.문제출제확인();
 
-        quizService.updateQuizDetailByQuizNum(1);
+        quizService.updateQuizDetailByQuizNum(Long.valueOf(1));
 
         List<QuizEntity> quizEntities = quizService.getQuizByAll();
         List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
@@ -126,10 +125,10 @@ class QuizSettingServiceTest {
     @Test
     void 퀴즈삭제확인(){
         this.문제출제확인();
-        QuizDto Q = quizService.getQuizByQuizNum(1);
+        QuizDto Q = quizService.getQuizByQuizNum( Long.valueOf(1));
         System.out.println(Q.getQuizNum()+" "+Q.getQuizAnswer());
 
-        quizService.deleteQuiz(1);
+        quizService.deleteQuiz( Long.valueOf(1));
 
         List<QuizEntity> quizEntities = quizService.getQuizByAll();
         List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();

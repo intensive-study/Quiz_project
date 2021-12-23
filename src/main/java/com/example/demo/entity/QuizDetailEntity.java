@@ -17,7 +17,7 @@ public class QuizDetailEntity {
 
     @Id
     @Column(name = "quiz_num")
-    private Integer quizNum;
+    private Long quizNum;
 
     @MapsId
     @OneToOne

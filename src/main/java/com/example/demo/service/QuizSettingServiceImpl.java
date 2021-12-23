@@ -86,7 +86,7 @@ public class QuizSettingServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizDto getQuizByQuizNum(Integer quizNum) {
+    public QuizDto getQuizByQuizNum(Long quizNum) {
         Optional<QuizEntity> quizEntity = quizRepository.findById(quizNum);
         QuizDto[] quizDto = {null};
         ModelMapper mapper = new ModelMapper();
@@ -129,7 +129,7 @@ public class QuizSettingServiceImpl implements QuizService {
 
     @Override
     @Transactional
-    public void deleteQuiz(Integer quizNum) {
+    public void deleteQuiz(Long quizNum) {
         quizRepository.deleteById(quizNum);
     }
 
@@ -153,7 +153,7 @@ public class QuizSettingServiceImpl implements QuizService {
 
     @Override
     @Transactional
-    public QuizDetailEntity updateQuizDetailByQuizNum(Integer quizNum) {
+    public QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) {
 
         //나중에는 퀴즈히스토리로 받아와서 값 바꿀꺼임
         Optional<QuizDetailEntity> quizDetail = quizDetailRepository.findById(quizNum);
