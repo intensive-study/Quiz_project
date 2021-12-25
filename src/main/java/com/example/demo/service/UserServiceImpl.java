@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,16 +22,19 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    Environment env;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder){
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, Environment env){
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.env = env;
     }
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException{
         UserEntity userEntity = userRepository.findByUserId(userId);
+        log.info("userEntity :" + userEntity.toString());
         if(userEntity == null)
             throw new UsernameNotFoundException(userId + ": not found");
         User user = new User(userEntity.getUserId(), userEntity.getPassword(), true, true, true, true, new ArrayList<>());

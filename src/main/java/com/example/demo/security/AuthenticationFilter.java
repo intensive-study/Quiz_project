@@ -6,6 +6,7 @@ import com.example.demo.vo.RequestLogin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,12 +23,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+@Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private UserService userService;
-    private Environment env;
+    private final UserService userService;
+    private final Environment env;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService, Environment env){
+    public AuthenticationFilter(AuthenticationManager authenticationManager,
+                                UserService userService,
+                                Environment env){
         super.setAuthenticationManager(authenticationManager);
         this.userService = userService;
         this.env = env;
@@ -37,10 +41,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException{
         try{
-            RequestLogin credit = new ObjectMapper().readValue(request.getInputStream(), RequestLogin.class);
+            RequestLogin creds = new ObjectMapper().readValue(request.getInputStream(), RequestLogin.class);
+            log.info(creds.toString());
+//            RequestLogin credit = new ObjectMapper().readValue(request.getInputStream(), RequestLogin.class);
+
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            credit.getUserId(), credit.getPassword(), new ArrayList<>())
+                            creds.getUserId(), creds.getPassword(), new ArrayList<>())
                     );
         } catch (IOException e){
             throw new RuntimeException(e);
@@ -63,7 +70,5 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .compact();
 
         response.addHeader("token", token);
-
-
     }
 }

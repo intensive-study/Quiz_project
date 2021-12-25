@@ -13,9 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private UserService userService;
-    private Environment env;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserService userService;
+    private final Environment env;
 
     public WebSecurity(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, Environment env){
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -26,9 +26,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/users").permitAll();
-
-        http.authorizeRequests()
+        http.authorizeRequests().antMatchers("/users/**").permitAll()
+                        .antMatchers("/h2-console/**").permitAll()
                         .antMatchers("/**")
                                 .hasIpAddress("127.0.0.1")
                                         .and()
@@ -45,6 +44,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-//        auth.userDetailsService();
+        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
     }
 }
