@@ -8,13 +8,16 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
         User user = new User(userEntity.getUserId(), userEntity.getPassword(), true, true, true, true, new ArrayList<>());
         return user;
     }
+
 
     @Override
     public UserDto createUser(UserDto userDto) {

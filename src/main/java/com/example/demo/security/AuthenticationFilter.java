@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import com.example.demo.dto.UserDto;
 import com.example.demo.service.UserService;
+import com.example.demo.util.JwtUtil;
 import com.example.demo.vo.RequestLogin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -17,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -70,5 +73,24 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .compact();
 
         response.addHeader("token", token);
+    }
+
+    private boolean isJwtValid(String jwt){
+
+        boolean result = true;
+        String subject = null;
+        try{
+            subject = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
+                    .parseClaimsJws(jwt.trim()).getBody()
+                    .getSubject();
+        } catch(Exception ex){
+            result = false;
+        }
+
+        if(subject == null || subject.isEmpty()){
+            result = false;
+        }
+
+        return result;
     }
 }

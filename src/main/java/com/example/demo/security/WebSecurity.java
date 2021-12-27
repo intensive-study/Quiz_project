@@ -28,6 +28,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.authorizeRequests().antMatchers("/users/**").permitAll()
                         .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/users").permitAll() // 회원가입은 가능하게끔
+                .antMatchers("/welcome").authenticated()
                         .antMatchers("/**")
                                 .hasIpAddress("127.0.0.1")
                                         .and()
