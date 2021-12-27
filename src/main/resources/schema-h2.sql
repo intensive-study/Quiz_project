@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `USER_INFO`;
 
 CREATE TABLE `USER_INFO` (
                              `user_id`	varchar	NOT NULL,
-                             `user_name`	varchar	NOT NULL,
+                             `name`	varchar	NOT NULL,
                              `password`	varchar	NOT NULL,
                              `activation`	boolean	NULL,
                              `total_score`	int	NULL,

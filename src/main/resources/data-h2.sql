@@ -1,7 +1,7 @@
 DELETE FROM USER_INFO ;
 
 INSERT INTO USER_INFO
-(user_id, user_name, password, activation, total_score, register_date)
+(user_id, name, password, activation, total_score, register_date)
 VALUES
     ('user1', 'test', '12345', 'F', '100', '2021-12-17');
 

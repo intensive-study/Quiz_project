@@ -25,7 +25,10 @@ spring:
     username: sa
     password:
 
-# #현우님 application.xml
+ #현우님 application.xml
+token:
+  expiration_time: 864000000
+  secret: user_token
 #  datasource:
 #    #    driver-class-name: org.mariadb.jdbc.Driver
 #    #    url: jdbc:mariadb://rds-seoul-finalproject.c4zzcvkkrxzn.ap-northeast-2.rds.amazonaws.com:3306/tmax
