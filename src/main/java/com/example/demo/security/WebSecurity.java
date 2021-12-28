@@ -26,12 +26,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/users/**").permitAll()
-                        .antMatchers("/h2-console/**").permitAll()
-                        .antMatchers("/**")
-                                .hasIpAddress("127.0.0.1")
-                                        .and()
-                                                .addFilter(getAuthenticationFilter());
+        http.authorizeRequests().antMatchers("/**").permitAll();
+//                        .antMatchers("/**").permitAll()
+//                        .antMatchers("/**")
+//                                .hasIpAddress("127.0.0.1")
+//                                        .and()
+//                                                .addFilter(getAuthenticationFilter());
 
         http.headers().frameOptions().disable();
     }
