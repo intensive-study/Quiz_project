@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "QUIZ_LIST")
 @Getter @Setter
-@DynamicUpdate //choice5: Null 값으로 변경하기 어려움
+@DynamicUpdate //choice5: 값이 있는 경우, Null 값으로 변경 어려움
 @NoArgsConstructor
 public class QuizEntity {
     @Id

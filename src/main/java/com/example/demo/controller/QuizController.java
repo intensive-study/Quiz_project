@@ -2,9 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.CategoryDto;
 import com.example.demo.dto.QuizDto;
+import com.example.demo.entity.CategoryEntity;
+import com.example.demo.entity.QuizEntity;
+import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.service.QuizService;
-import com.example.demo.vo.RequestUser;
-import com.example.demo.vo.ResponseUser;
+import com.example.demo.vo.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,32 +42,34 @@ public class QuizController {
     }
 
     @PostMapping("/category/create")
-    public ResponseEntity createCategory(@RequestBody @Valid RequestUser category){
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
-        quizService.createQuizCategory(categoryDto);
+    public ResponseEntity createCategory(@RequestBody CategoryDto categoryDto) throws NameDuplicateException {
+//        ModelMapper mapper = new ModelMapper();
+//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+//        CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
 
-        ResponseUser responseUser = mapper.map(categoryDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+        CategoryEntity responseCategory = quizService.createQuizCategory(categoryDto);
+        System.out.println(responseCategory.getCategoryNum());
+
+//        ResponseCategory responseCategory = mapper.map(responseCategoryEntity, ResponseCategory.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseCategory);
     }
 
     @GetMapping("/{quizNum}")
-    public ResponseEntity<ResponseUser> getQuiz(@PathVariable("quizNum") Long quizNum){
+    public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum){
 
         QuizDto quizDto = quizService.getQuizByQuizNum(quizNum);
-        ResponseUser responseUser = new ModelMapper().map(quizDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.OK).body(responseUser);
+        ResponseQuiz responseQuiz = new ModelMapper().map(quizDto, ResponseQuiz.class);
+        return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
-    @PostMapping("/setting")
-    public ResponseEntity createQuiz(@RequestBody @Valid RequestUser quiz){
+    @PostMapping("/create")
+    public ResponseEntity createQuiz(@RequestBody @Valid RequestQuiz quiz){
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         QuizDto quizDto = mapper.map(quiz, QuizDto.class);
-        quizService.createQuiz(quizDto);
+        QuizEntity responseQuizEntity = quizService.createQuiz(quizDto);
 
-        ResponseUser responseUser = mapper.map(quizDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+//        ResponseQuiz responseQuiz = mapper.map(responseQuizEntity, ResponseQuiz.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuizEntity);
     }
 }

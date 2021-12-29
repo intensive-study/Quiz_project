@@ -5,6 +5,7 @@ import com.example.demo.dto.QuizDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.exception.NameDuplicateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public interface QuizService {
 
     //카테고리 생성
-    CategoryEntity createQuizCategory(CategoryDto categoryDto);
+    CategoryEntity createQuizCategory(CategoryDto categoryDto) throws NameDuplicateException;
     //카테고리 전체 보기
     List<CategoryEntity> getCategoryByAll();
     //카테고리 이름변경
