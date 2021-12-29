@@ -32,19 +32,18 @@ class QuizSettingServiceTest {
         this.userService = userService;
     }
 
-    @Test
-    CategoryEntity 카테고리추가(){
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setCategoryName("운영체제");
-
-        CategoryEntity result = quizService.createQuizCategory(categoryDto);
-
-        List<CategoryEntity> categoryEntities = quizService.getCategoryByAll();
-
-        //방금 넣어준 데이터와 테이블에 마지막으로 들어간 데이터가 같은지 확인
-        assertThat(categoryEntities.get(categoryEntities.size()-1).getCategoryNum()).isEqualTo(result.getCategoryNum());
-        return categoryEntities.get(categoryEntities.size()-1);
-    }
+//    CategoryEntity 카테고리추가(){
+//        CategoryDto categoryDto = new CategoryDto();
+//        categoryDto.setCategoryName("운영체제");
+//
+//        CategoryEntity result = quizService.createQuizCategory(categoryDto);
+//
+//        List<CategoryEntity> categoryEntities = quizService.getCategoryByAll();
+//
+//        //방금 넣어준 데이터와 테이블에 마지막으로 들어간 데이터가 같은지 확인
+//        assertThat(categoryEntities.get(categoryEntities.size()-1).getCategoryNum()).isEqualTo(result.getCategoryNum());
+//        return categoryEntities.get(categoryEntities.size()-1);
+//    }
 
 
     void 사용자데이터추가(){
@@ -62,12 +61,12 @@ class QuizSettingServiceTest {
     @Test
     void 문제출제확인(){
 
-        CategoryEntity categoryEntity = this.카테고리추가();
+//        CategoryEntity categoryEntity = this.카테고리추가();
         this.사용자데이터추가();
         Iterable<UserEntity> userEntity = userService.getUsersByAll();
 
         QuizDto quizDto = new QuizDto();
-        quizDto.setCategoryEntity(categoryEntity);
+//        quizDto.setCategoryEntity(categoryEntity);
         quizDto.setUserEntity(userEntity.iterator().next());
         quizDto.setQuizContents("문제내용");
         quizDto.setQuizAnswer("choice3");

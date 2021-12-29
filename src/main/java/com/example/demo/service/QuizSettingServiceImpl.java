@@ -5,6 +5,8 @@ import com.example.demo.dto.QuizDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.exception.NameDuplicateException;
+import com.example.demo.exception.ResultCode;
 import com.example.demo.jpa.CategoryRepository;
 import com.example.demo.jpa.QuizDetailRepository;
 import com.example.demo.jpa.QuizRepository;
@@ -33,7 +35,14 @@ public class QuizSettingServiceImpl implements QuizService {
     }
 
     @Override
-    public CategoryEntity createQuizCategory(CategoryDto categoryDto) {
+    public CategoryEntity createQuizCategory(CategoryDto categoryDto) throws NameDuplicateException {
+//        categoryRepository.findByCategoryName(categoryDto.getCategoryName())
+//                .ifPresent({throw new NameDuplicateException("name duplicated", ResultCode.NAME_DUPLICATION);});
+        Optional <CategoryEntity> categoryEntity = categoryRepository.findByCategoryName(categoryDto.getCategoryName());
+        if(categoryEntity.isPresent()){
+            throw new NameDuplicateException("name duplicated", ResultCode.NAME_DUPLICATION);
+        }
+
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         CategoryEntity category = mapper.map(categoryDto, CategoryEntity.class);
