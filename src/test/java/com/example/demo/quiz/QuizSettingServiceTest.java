@@ -9,6 +9,7 @@ import com.example.demo.entity.QuizEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,17 @@ import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@RequiredArgsConstructor
 class QuizSettingServiceTest {
 
     private final QuizService quizService;
     private final UserService userService;
 
-    @Autowired
+  /*  @Autowired
     public QuizSettingServiceTest(QuizService quizService, UserService userService) {
         this.quizService = quizService;
         this.userService = userService;
-    }
+    }*/
 
 //    CategoryEntity 카테고리추가(){
 //        CategoryDto categoryDto = new CategoryDto();
@@ -55,6 +57,24 @@ class QuizSettingServiceTest {
         userDto.setPassword("!2342");
 
         userService.createUser(userDto);
+
+    }
+
+    @Test
+    void 문제변경확인(){
+        this.문제출제확인();
+
+        QuizDto quizDto = new QuizDto();
+        quizDto.setQuizNum(Long.valueOf(1));
+        quizDto.setQuizContents("문제내용");
+        quizDto.setQuizAnswer("choice1");
+        quizService.updateQuiz(quizDto);
+
+        List<QuizEntity> quizEntities = quizService.getQuizByAll();
+        List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
+
+        System.out.println(quizEntities.get(quizEntities.size()-1).getQuizAnswer() +" "+ quizDetailEntities.get(quizDetailEntities.size()-1).getQuizEntity().getQuizAnswer());
+        System.out.println(quizEntities.size()+" "+quizDetailEntities.size());
 
     }
 
@@ -84,24 +104,6 @@ class QuizSettingServiceTest {
 
         //방금 넣어준 데이터와 테이블에 마지막으로 들어간 데이터가 같은지 확인
         assertThat(quizEntities.get(quizEntities.size()-1).getQuizNum()).isEqualTo(result.getQuizNum());
-    }
-
-    @Test
-    void 문제변경확인(){
-        this.문제출제확인();
-
-        QuizDto quizDto = new QuizDto();
-        quizDto.setQuizNum(Long.valueOf(1));
-        quizDto.setQuizContents("문제내용");
-        quizDto.setQuizAnswer("choice1");
-        quizService.updateQuiz(quizDto);
-
-        List<QuizEntity> quizEntities = quizService.getQuizByAll();
-        List<QuizDetailEntity> quizDetailEntities = quizService.getQuizDetailByAll();
-
-        System.out.println(quizEntities.get(quizEntities.size()-1).getQuizAnswer() +" "+ quizDetailEntities.get(quizDetailEntities.size()-1).getQuizEntity().getQuizAnswer());
-        System.out.println(quizEntities.size()+" "+quizDetailEntities.size());
-
     }
 
     @Test
