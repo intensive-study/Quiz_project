@@ -2,10 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.CategoryDto;
 import com.example.demo.dto.QuizDto;
+import com.example.demo.dto.ResultOfUserSolutionDto;
+import com.example.demo.dto.SubmittedUserSolutionDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizEntity;
 import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.service.QuizService;
+import com.example.demo.service.UserQuizHistoryService;
 import com.example.demo.vo.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -23,10 +26,12 @@ import java.util.stream.Collectors;
 public class QuizController {
 
     private final QuizService quizService;
+    private final UserQuizHistoryService userQuizHistoryService;
 
     @Autowired
-    public QuizController(QuizService quizService){
+    public QuizController(QuizService quizService, UserQuizHistoryService userQuizHistoryService){
         this.quizService = quizService;
+        this.userQuizHistoryService = userQuizHistoryService;
     }
 
     @GetMapping
@@ -71,5 +76,12 @@ public class QuizController {
 
 //        ResponseQuiz responseQuiz = mapper.map(responseQuizEntity, ResponseQuiz.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseQuizEntity);
+    }
+
+    @PostMapping("/user/solution")
+    public ResponseEntity<ResultOfUserSolutionDto> checkUserSolution(@RequestBody @Valid SubmittedUserSolutionDto userSolutionDto){
+        ResultOfUserSolutionDto resultOfUserSolutionDto = userQuizHistoryService.checkUserSolution(userSolutionDto);
+        if(resultOfUserSolutionDto == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(resultOfUserSolutionDto);
     }
 }
