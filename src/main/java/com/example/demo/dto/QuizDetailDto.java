@@ -17,7 +17,6 @@ public class QuizDetailDto {
     private Integer trialUserCount;
     private Integer answerUserCount;
 
-
     public QuizDetailDto(QuizEntity source){
         copyProperties(source, this);
     }

@@ -1,12 +1,13 @@
 package com.example.demo.jwt;
 
+import com.example.demo.entity.UserEntity;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider implements InitializingBean {
 
-    Environment env;
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private static final String AUTHORITIES_KEY = "auth";
     private final String secret;
@@ -32,14 +32,15 @@ public class TokenProvider implements InitializingBean {
     private Key key;
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds") long tokenValidityMilliSeconds){
+            @Value("${jwt.token-validity-in-seconds}") long tokenValidityMilliSeconds){
         this.secret = secret;
-        this.tokenValidityMilliSeconds = tokenValidityMilliSeconds;
+        this.tokenValidityMilliSeconds = tokenValidityMilliSeconds * 1000;
     }
 
     @Override
     public void afterPropertiesSet(){
         byte[] keyBytes = Base64.getDecoder().decode(secret);
+        logger.info("keyBytes" + keyBytes.toString());
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -54,15 +55,16 @@ public class TokenProvider implements InitializingBean {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
-                .signWith(SignatureAlgorithm.HS512, key)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
     }
 
     public Authentication getAuthentication(String token){
         Claims claims = Jwts
-                .parser()
+                .parserBuilder()
                 .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
 
@@ -77,7 +79,7 @@ public class TokenProvider implements InitializingBean {
 
     public boolean validateToken(String token){
         try{
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
             logger.info("잘못된 JWT 서명입니다");

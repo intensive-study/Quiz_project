@@ -18,8 +18,8 @@
 -- (`category_num`,user_id,quiz_score,quiz_contents,quiz_answer,choice1, choice2,choice3,choice4)
 -- VALUES
 --     ('4','user1', 5, 'question', 'choice2', '1번 보기내용', '2번 보기내용', '3번 보기내용', '4번 보기내용');
-INSERT INTO USER_INFO (USER_ID, NAME, PASSWORD) values ('1', 'park', '12345678');
-INSERT INTO USER_INFO (USER_ID, NAME, PASSWORD) values ('2', 'park', '12345678');
+INSERT INTO USER_INFO (USER_ID, USERNAME, PASSWORD, ACTIVATED) values ('1', 'admin', '$2a$08$lDnHPz7eUkSi6ao14Twuau08mzhWrL4kyZGGU5xfiGALO/Vxd5DOi', 1);
+INSERT INTO USER_INFO (USER_ID, USERNAME, PASSWORD, ACTIVATED) values ('2', 'user', '$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC', 1);
 
 INSERT INTO AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER');
 INSERT INTO AUTHORITY (AUTHORITY_NAME) values ('ROLE_ADMIN');
