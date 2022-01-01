@@ -50,11 +50,14 @@ class QuizSettingServiceTest {
 
         UserDto userDto = new UserDto();
 
-        userDto.setUserId("user2");
-        userDto.setName("user_name");
+//        userDto.setUserId("user2");
+        userDto.setUsername("user_name");
+//        userDto.setName("user_name");
         userDto.setPassword("!2342");
 
-        userService.createUser(userDto);
+        userService.signup(userDto);
+//        createUser -> signup으로 변경
+//        userService.createUser(userDto);
 
     }
 
