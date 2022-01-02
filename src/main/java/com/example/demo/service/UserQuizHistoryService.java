@@ -21,21 +21,21 @@ public class UserQuizHistoryService {
     private final QuizRepository quizRepository;
 
     @Transactional
-    public ResultOfUserSolutionDto checkUserSolution(SubmittedUserSolutionDto submittedUserSolutionDto){
-        if(submittedUserSolutionDto.isSolved()) return null;
+    public ResultOfUserSolutionDto checkUserSolution(SubmittedUserSolutionDto submittedUserSolutionDto) {
+        if (submittedUserSolutionDto.isSolved()) return null;
 
         QuizEntity quizEntity = quizRepository.findById(submittedUserSolutionDto.getQuizNum())
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 퀴즈ID" + submittedUserSolutionDto.getQuizNum()));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈ID" + submittedUserSolutionDto.getQuizNum()));
 
         UserQuizHistoryEntity userQuizHistoryEntity = userQuizHistoryRepository.findByQuizNumAndUserId(
                 submittedUserSolutionDto.getQuizNum(),
                 submittedUserSolutionDto.getUserId()
-        ).orElseThrow(()-> new IllegalArgumentException("사용자ID가 올바르지 않습니다."));
+        ).orElseThrow(() -> new IllegalArgumentException("사용자ID가 올바르지 않습니다."));
 
-        userQuizHistoryEntity.setTrialCount(userQuizHistoryEntity.getTrialCount()+1);
+        userQuizHistoryEntity.setTrialCount(userQuizHistoryEntity.getTrialCount() + 1);
         userQuizHistoryEntity.setSolveTime(new Date());
 
-        if(submittedUserSolutionDto.getAnswer().equals(quizEntity.getQuizAnswer())){
+        if (submittedUserSolutionDto.getAnswer().equals(quizEntity.getQuizAnswer())) {
             float score = 10; // 점수 계산하는 메소드 구현해주세요! 그리고 userQuizHistoryEntity에 반영해주세요!
             userQuizHistoryEntity.setSolved(true);
             userQuizHistoryEntity.setSolveScore(score);
