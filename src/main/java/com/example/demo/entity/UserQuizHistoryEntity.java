@@ -9,17 +9,18 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@Table(name = "user_quiz_history")
 public class UserQuizHistoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private UserEntity userEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="quiz_num")
     private QuizEntity quizEntity;
 

@@ -1,5 +1,9 @@
 package com.example.demo.security;
 
+import com.example.demo.jwt.JwtAccessDeniedHandler;
+import com.example.demo.jwt.JwtAuthenticationEntryPoint;
+import com.example.demo.jwt.JwtSecurityConfig;
+import com.example.demo.jwt.TokenProvider;
 import com.example.demo.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -9,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -20,32 +25,59 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final Environment env;
 
-    public WebSecurity(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, Environment env){
+    //인강 보고 추가한 부분
+    private final TokenProvider tokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    public WebSecurity(
+            BCryptPasswordEncoder bCryptPasswordEncoder,
+            UserService userService,
+            Environment env,
+            TokenProvider tokenProvider,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            JwtAccessDeniedHandler jwtAccessDeniedHandler){
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
         this.env = env;
+        this.tokenProvider = tokenProvider;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception{
-        http.csrf().disable();
-        http.authorizeRequests().antMatchers("/**").permitAll();
-//                        .antMatchers("/**").permitAll()
-//                        .antMatchers("/**")
-//                                .hasIpAddress("127.0.0.1")
-//                                        .and()
-//                                                .addFilter(getAuthenticationFilter());
-        http.headers().frameOptions().disable();
+    public void configure(org.springframework.security.config.annotation.web.builders.WebSecurity webSecurity){
+        webSecurity.ignoring()
+                .antMatchers(
+                        "/h2-console/**"
+                        ,"/favicon.ico"
+                        ,"/error"
+                );
     }
 
-    private AuthenticationFilter getAuthenticationFilter() throws Exception{
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(
-                authenticationManager(), userService, env);
-
-        return authenticationFilter;
-    }
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                // enable h2-console
+                .and()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+                // 세션을 사용하지 않기 때문에 stateless
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/api/signup").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .apply(new JwtSecurityConfig(tokenProvider));
     }
 }

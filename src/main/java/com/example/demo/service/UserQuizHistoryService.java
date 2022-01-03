@@ -3,10 +3,12 @@ package com.example.demo.service;
 import com.example.demo.dto.ResultOfUserSolutionDto;
 import com.example.demo.dto.SubmittedUserSolutionDto;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.UserQuizHistoryEntity;
 import com.example.demo.jpa.QuizRepository;
 import com.example.demo.jpa.UserQuizHistoryRepository;
 
+import com.example.demo.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ public class UserQuizHistoryService {
 
     private final UserQuizHistoryRepository userQuizHistoryRepository;
     private final QuizRepository quizRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public ResultOfUserSolutionDto checkUserSolution(SubmittedUserSolutionDto submittedUserSolutionDto) {
@@ -27,10 +30,15 @@ public class UserQuizHistoryService {
         QuizEntity quizEntity = quizRepository.findById(submittedUserSolutionDto.getQuizNum())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈ID" + submittedUserSolutionDto.getQuizNum()));
 
+        UserEntity userEntity = userRepository.findById(submittedUserSolutionDto.getUserId()).orElseThrow(
+                () ->new IllegalArgumentException("존재하지 않는 사용자ID" + submittedUserSolutionDto.getUserId())
+        );
+
         UserQuizHistoryEntity userQuizHistoryEntity = userQuizHistoryRepository.findByQuizNumAndUserId(
-                submittedUserSolutionDto.getQuizNum(),
-                submittedUserSolutionDto.getUserId()
+                quizEntity,
+                userEntity
         ).orElseThrow(() -> new IllegalArgumentException("사용자ID가 올바르지 않습니다."));
+
 
         userQuizHistoryEntity.setTrialCount(userQuizHistoryEntity.getTrialCount() + 1);
         userQuizHistoryEntity.setSolveTime(new Date());
