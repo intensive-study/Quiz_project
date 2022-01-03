@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface UserQuizHistoryRepository extends JpaRepository<UserQuizHistoryEntity, Long> {
 
-    Optional<UserQuizHistoryEntity> findByQuizNumAndUserId(Long quizNum, String userId);
+    Optional<UserQuizHistoryEntity> findByQuizNumAndUserId(Long quizNum, Long userId);
 
 }
