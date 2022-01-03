@@ -22,9 +22,10 @@ public class UserQuizHistoryService {
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
 
-    public UserQuizHistoryService(UserQuizHistoryRepository userQuizHistoryRepository, QuizRepository quizRepository){
+    public UserQuizHistoryService(UserQuizHistoryRepository userQuizHistoryRepository, QuizRepository quizRepository, UserRepository userRepository){
         this.userQuizHistoryRepository = userQuizHistoryRepository;
         this.quizRepository = quizRepository;
+        this.userRepository = userRepository;
     }
     @Transactional
     public ResultOfUserSolutionDto checkUserSolution(SubmittedUserSolutionDto submittedUserSolutionDto) {
