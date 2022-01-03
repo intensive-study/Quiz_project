@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.UserQuizHistoryEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,4 +19,5 @@ public class SubmittedUserSolutionDto {
         this.answer = answer;
         this.solved = solved;
     }
+
 }

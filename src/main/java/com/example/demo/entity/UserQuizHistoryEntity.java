@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "user_quiz_history")
+@NoArgsConstructor
 public class UserQuizHistoryEntity {
 
     @Id
@@ -35,5 +38,13 @@ public class UserQuizHistoryEntity {
 
     @Column(name="is_solved", nullable = false)
     private boolean isSolved;
+
+    public UserQuizHistoryEntity(Long id, UserEntity userEntity, QuizEntity quizEntity, int trialCount, boolean isSolved){
+        this.id = id;
+        this.userEntity = userEntity;
+        this.quizEntity = quizEntity;
+        this.trialCount = trialCount;
+        this.isSolved = isSolved;
+    }
 
 }

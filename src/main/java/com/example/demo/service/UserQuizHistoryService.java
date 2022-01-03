@@ -37,8 +37,7 @@ public class UserQuizHistoryService {
         UserQuizHistoryEntity userQuizHistoryEntity = userQuizHistoryRepository.findByQuizNumAndUserId(
                 quizEntity,
                 userEntity
-        ).orElseThrow(() -> new IllegalArgumentException("사용자ID가 올바르지 않습니다."));
-
+        ).orElse(new UserQuizHistoryEntity(0L, userEntity, quizEntity, 0, false));
 
         userQuizHistoryEntity.setTrialCount(userQuizHistoryEntity.getTrialCount() + 1);
         userQuizHistoryEntity.setSolveTime(new Date());

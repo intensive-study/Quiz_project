@@ -1,9 +1,11 @@
 package com.example.demo.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Date;
 
+@Getter
 public class ResultOfUserSolutionDto {
 
     private Long quizNum;

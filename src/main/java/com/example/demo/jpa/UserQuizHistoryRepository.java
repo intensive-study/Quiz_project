@@ -13,7 +13,7 @@ public interface UserQuizHistoryRepository extends JpaRepository<UserQuizHistory
 
     //Optional<UserQuizHistoryEntity> findByQuizNumAndUserId(Long quizNum, Long userId);
 
-    @Query(value = "select * from user_quiz_history h where  h.quiz_num = ?#{#quizEntity.quiz_num} and h.user_id = ?#{#userEntity.user_id}", nativeQuery = true)
+    @Query(value = "select * from user_quiz_history h where  h.quiz_num = ?#{#quizEntity.getQuizNum()} and h.user_id = ?#{#userEntity.getUserId()}", nativeQuery = true)
     Optional<UserQuizHistoryEntity> findByQuizNumAndUserId(@Param("quizEntity")QuizEntity quizEntity, @Param("userEntity")UserEntity userEntity);
 
 }
