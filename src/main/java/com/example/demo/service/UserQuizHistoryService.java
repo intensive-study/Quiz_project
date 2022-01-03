@@ -16,13 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 @Service
-@RequiredArgsConstructor
 public class UserQuizHistoryService {
 
     private final UserQuizHistoryRepository userQuizHistoryRepository;
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
 
+    public UserQuizHistoryService(UserQuizHistoryRepository userQuizHistoryRepository, QuizRepository quizRepository){
+        this.userQuizHistoryRepository = userQuizHistoryRepository;
+        this.quizRepository = quizRepository;
+    }
     @Transactional
     public ResultOfUserSolutionDto checkUserSolution(SubmittedUserSolutionDto submittedUserSolutionDto) {
         if (submittedUserSolutionDto.isSolved()) return null;
