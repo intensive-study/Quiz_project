@@ -1,14 +1,15 @@
 package com.example.demo.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Date;
 
+@Getter
 public class ResultOfUserSolutionDto {
 
     private Long quizNum;
     private Long userId;
-//    private String userId;
     private float solveScore;
     private Date solveTime;
     private boolean isSolved;

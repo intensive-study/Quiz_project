@@ -20,19 +20,19 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+/*@RunWith(SpringRunner.class)
 @SpringBootTest
-@RequiredArgsConstructor
+@RequiredArgsConstructor*/
 class QuizSettingServiceTest {
 
-    private final QuizService quizService;
+   /* private final QuizService quizService;
     private final UserService userService;
 
-  /*  @Autowired
+  *//*  @Autowired
     public QuizSettingServiceTest(QuizService quizService, UserService userService) {
         this.quizService = quizService;
         this.userService = userService;
-    }*/
+    }*//*
 
 //    CategoryEntity 카테고리추가(){
 //        CategoryDto categoryDto = new CategoryDto();
@@ -47,6 +47,8 @@ class QuizSettingServiceTest {
 //        return categoryEntities.get(categoryEntities.size()-1);
 //    }
 
+<<<<<<< HEAD
+=======
 
     void 사용자데이터추가(){
 
@@ -141,4 +143,5 @@ class QuizSettingServiceTest {
         assertThat(quizEntities.size()).isEqualTo(quizDetailEntities.size());
     }
 
+>>>>>>> 428cf2f7fe0e9e3d2e801dc1504c98cf68007d40*/
 }

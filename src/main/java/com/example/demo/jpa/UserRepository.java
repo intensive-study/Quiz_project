@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<UserEntity, String> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 //    @EntityGraph(attributePaths = "authorities")
 //    Optional<UserEntity> findOneWithAuthoritiesByUserId(String userId);
