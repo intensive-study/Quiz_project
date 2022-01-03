@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class SubmittedUserSolutionDto {
 
-    private String userId;
+    private Long userId;
     private Long quizNum;
     private String answer;
     private boolean solved;
 
-    public SubmittedUserSolutionDto(String userId, Long quizNum, String answer, boolean solved) {
+    public SubmittedUserSolutionDto(Long userId, Long quizNum, String answer, boolean solved) {
         this.userId = userId;
         this.quizNum = quizNum;
         this.answer = answer;
