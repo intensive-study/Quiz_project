@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.SubmittedUserSolutionDto;
+import com.example.demo.dto.LoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
-public class QuizControllerTest {
+public class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,10 +28,9 @@ public class QuizControllerTest {
     private ObjectMapper mapper;
 
     @Test
-    public void 정상적인_Post_요청시_서버로부터_상태코드200을_받는다() throws Exception{
-        String json = mapper.writeValueAsString(new SubmittedUserSolutionDto(1L, 1L, "3", true));
-        String URL = "/quiz/user/solution";
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON).content(json);
+    public void 로그인성공시_서버로부터_응답코드200을_받는다() throws Exception{
+        String json = mapper.writeValueAsString(new LoginDto("admin","admin"));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/authenticate").contentType(MediaType.APPLICATION_JSON).content(json);
         mockMvc.perform(requestBuilder).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
     }
 }
