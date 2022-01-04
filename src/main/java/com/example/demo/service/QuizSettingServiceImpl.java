@@ -5,11 +5,15 @@ import com.example.demo.dto.QuizDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.entity.UserEntity;
+import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.exception.ResultCode;
 import com.example.demo.jpa.CategoryRepository;
 import com.example.demo.jpa.QuizDetailRepository;
 import com.example.demo.jpa.QuizRepository;
+import com.example.demo.jpa.UserRepository;
+import com.example.demo.vo.RequestQuiz;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +30,14 @@ public class QuizSettingServiceImpl implements QuizService {
     CategoryRepository categoryRepository;
     QuizRepository quizRepository;
     QuizDetailRepository quizDetailRepository;
+    UserRepository userRepository;
 
     @Autowired
-    public QuizSettingServiceImpl(CategoryRepository categoryRepository, QuizRepository quizRepository, QuizDetailRepository quizDetailRepository){
+    public QuizSettingServiceImpl(CategoryRepository categoryRepository, QuizRepository quizRepository, QuizDetailRepository quizDetailRepository, UserRepository userRepository){
         this.categoryRepository = categoryRepository;
         this.quizRepository = quizRepository;
         this.quizDetailRepository = quizDetailRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -75,18 +81,37 @@ public class QuizSettingServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizEntity createQuiz(QuizDto quizDto){
+    public QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         QuizEntity quiz = mapper.map(quizDto, QuizEntity.class);
 
+        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(quizDto.getCategoryNum());
+        if(categoryEntity.isEmpty()){
+            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
+        }
+
+        Optional<UserEntity> userEntity = userRepository.findById(quizDto.getUserId());
+        if(userEntity.isEmpty()){
+            throw new IdNotExistException("user not exist", ResultCode.ID_NOT_EXIST);
+        }
+
+        quiz.setCategoryEntity(categoryEntity.get());
+        quiz.setUserEntity(userEntity.get());
+
+        //초기화
         QuizDetailEntity quizDetail = new QuizDetailEntity();
         quizDetail.setQuizEntity(quiz);
+        quizDetail.setAnswerRate(0);
+        quizDetail.setAnswerUserCount(0);
+        quizDetail.setTrialUserCount(0);
 
         //퀴즈디테일 추가하면서 주테이블인 퀴즈리스트에 없으면 함께 넣어줌
-        QuizDetailEntity result = quizDetailRepository.save(quizDetail);
+        QuizDetailEntity quizDetailEntity = quizDetailRepository.save(quizDetail);
 
-        return result.getQuizEntity();
+        QuizEntity result= quizDetailEntity.getQuizEntity();
+        result.setQuizDetailEntity(quizDetailEntity);
+        return result;
     }
 
     @Override
