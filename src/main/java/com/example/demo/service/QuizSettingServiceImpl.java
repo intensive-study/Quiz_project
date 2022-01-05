@@ -17,6 +17,7 @@ import com.example.demo.vo.RequestQuiz;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,17 @@ public class QuizSettingServiceImpl implements QuizService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 카테고리 조회
+     */
+    @Override
+    public List<CategoryEntity> getCategoryByAll() {
+        return categoryRepository.findAll();
+    }
+
+    /**
+     * 카테고리 생성
+     */
     @Override
     public CategoryEntity createQuizCategory(CategoryDto categoryDto) throws NameDuplicateException {
 //        categoryRepository.findByCategoryName(categoryDto.getCategoryName())
@@ -59,28 +71,62 @@ public class QuizSettingServiceImpl implements QuizService {
         return result;
     }
 
+    /**
+     * 카테고리 이름 변경
+     */
     @Override
-    public List<CategoryEntity> getCategoryByAll() {
-        return categoryRepository.findAll();
-    }
-
-    @Override
-    public CategoryEntity updateCategory(CategoryDto categoryDto) {
+    public CategoryEntity updateCategory(CategoryDto categoryDto) throws IdNotExistException {
         Optional<CategoryEntity> category = categoryRepository.findById(categoryDto.getCategoryNum());
+
+        if(category.isEmpty()){
+            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
+        }
 
         category.ifPresent(c->{
             c.setCategoryName(categoryDto.getCategoryName());
         });
+
         CategoryEntity result = category.get();
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        CategoryEntity category = mapper.map(categoryDto, CategoryEntity.class);
-//
-//        CategoryEntity result = categoryRepository.save(category);
 
         return result;
     }
 
+    /**
+     * 카테고리 삭제
+     */
+    @Override
+    public void deleteCategory(Long categoryNum) throws IdNotExistException {
+        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(categoryNum);
+
+        if(categoryEntity.isEmpty()){
+            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
+        }
+        categoryRepository.deleteById(categoryNum);
+    }
+
+    /**
+     * 퀴즈 조회
+     */
+    @Override
+    public List<QuizEntity> getQuizByAll() {
+        return quizRepository.findAll();
+    }
+    /**
+     * 퀴즈 개별 조회
+     */
+    @Override
+    public QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException {
+        Optional<QuizEntity> quizEntity = quizRepository.findById(quizNum);
+
+        if(quizEntity.isEmpty()){
+            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
+        }
+        return quizEntity.get();
+    }
+
+    /**
+     * 퀴즈 생성
+     */
     @Override
     public QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException {
         QuizEntity quiz = new ModelMapper().map(quizDto, QuizEntity.class);
@@ -98,7 +144,7 @@ public class QuizSettingServiceImpl implements QuizService {
         quiz.setCategoryEntity(categoryEntity.get());
         quiz.setUserEntity(userEntity.get());
 
-        //초기화
+        //(0, 0, 0)초기화 =>
         QuizDetailEntity quizDetail = new QuizDetailEntity();
         quizDetail.setQuizEntity(quiz);
         quizDetail.setAnswerRate(0);
@@ -113,23 +159,9 @@ public class QuizSettingServiceImpl implements QuizService {
         return result;
     }
 
-    @Override
-    public List<QuizEntity> getQuizByAll() {
-        return quizRepository.findAll();
-    }
-
-    @Override
-    public QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException {
-        Optional<QuizEntity> quizEntity = quizRepository.findById(quizNum);
-
-        if(quizEntity.isEmpty()){
-            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
-        }
-        System.out.println(quizEntity.get().getQuizNum());
-        System.out.println(quizEntity.get().getQuizDetailEntity().getQuizNum());
-        return quizEntity.get();
-    }
-
+    /**
+     * 퀴즈 내용 변경
+     */
     @Override
     public QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException {
         // 유저정보나 카테고리 변경시 업데이트되는지 확인 or 직접 함수호출
@@ -165,9 +197,22 @@ public class QuizSettingServiceImpl implements QuizService {
         return quiz.get();
     }
 
+    /**
+     * 퀴즈 삭제
+     */
     @Override
     @Transactional
-    public void deleteQuiz(Long quizNum) {
+    public void deleteQuiz(Long quizNum, Long userId) throws IdNotExistException {
+        Optional<QuizEntity> quiz = quizRepository.findById(quizNum);
+
+        if(quiz.isEmpty()){
+            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
+        }
+
+        if(quiz.get().getUserEntity().getUserId() != userId){
+            throw new InvalidDataAccessApiUsageException("수정 권한이 없습니다.");
+        }
+
         quizRepository.deleteById(quizNum);
     }
 

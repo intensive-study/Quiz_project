@@ -15,23 +15,39 @@ import java.util.List;
 
 public interface QuizService {
 
-    //카테고리 생성
-    CategoryEntity createQuizCategory(CategoryDto categoryDto) throws NameDuplicateException;
-    //카테고리 전체 보기
+    /**
+     * 카테고리 관련 서비스
+     */
     List<CategoryEntity> getCategoryByAll();
-    //카테고리 이름변경
+    //생성
+    CategoryEntity createQuizCategory(CategoryDto categoryDto) throws NameDuplicateException;
+    //이름 변경
     @Transactional
-    CategoryEntity updateCategory(CategoryDto categoryDto);
+    CategoryEntity updateCategory(CategoryDto categoryDto) throws IdNotExistException;
+    //삭제
+    @Transactional
+    void deleteCategory(Long CategoryNum) throws IdNotExistException;
 
-    //퀴즈 관련
-    QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException;
+    /**
+     * 퀴즈 관련 서비스
+     */
+    //조회
     List<QuizEntity> getQuizByAll();
+    //개별 조회
     QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException;
-    
-    @Transactional
-    void deleteQuiz(Long quizNum);
+    //생성
+    QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException;
+    //변경
     @Transactional
     QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException;
+    //삭제
+    @Transactional
+    void deleteQuiz(Long quizNum, Long userId) throws IdNotExistException;
+
+    /**
+     * 퀴즈 디테일
+     */
+    //카운트
     @Transactional
     QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) throws IdNotExistException;
 
