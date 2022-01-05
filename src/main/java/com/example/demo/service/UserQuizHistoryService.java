@@ -41,16 +41,18 @@ public class UserQuizHistoryService {
         UserQuizHistoryEntity userQuizHistoryEntity = userQuizHistoryRepository.findByQuizNumAndUserId(
                 quizEntity,
                 userEntity
-        ).orElse(new UserQuizHistoryEntity(0L, userEntity, quizEntity, 0, false));
+        ).orElse(new UserQuizHistoryEntity(0L, userEntity, quizEntity, 0, 0.0f, false));
 
         userQuizHistoryEntity.setTrialCount(userQuizHistoryEntity.getTrialCount() + 1);
         userQuizHistoryEntity.setSolveTime(new Date());
 
         if (submittedUserSolutionDto.getAnswer().equals(quizEntity.getQuizAnswer())) {
-            float score = 10; // 점수 계산하는 메소드 구현해주세요! 그리고 userQuizHistoryEntity에 반영해주세요!
+            float score = (float)quizEntity.getQuizScore() / userQuizHistoryEntity.getTrialCount();
+            score = Float.parseFloat(String.format("%.3f", score));
             userQuizHistoryEntity.setSolved(true);
             userQuizHistoryEntity.setSolveScore(score);
             userQuizHistoryRepository.save(userQuizHistoryEntity);
+            userEntity.setTotalScore(userEntity.getTotalScore() + score);
             return ResultOfUserSolutionDto.builder()
                     .userId(userQuizHistoryEntity.getUserEntity().getUserId())
                     .quizNum(userQuizHistoryEntity.getQuizEntity().getQuizNum())
