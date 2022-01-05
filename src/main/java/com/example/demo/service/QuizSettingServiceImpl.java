@@ -17,6 +17,7 @@ import com.example.demo.vo.RequestQuiz;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
@@ -55,16 +56,11 @@ public class QuizSettingServiceImpl implements QuizService {
      */
     @Override
     public CategoryEntity createQuizCategory(CategoryDto categoryDto) throws NameDuplicateException {
-//        categoryRepository.findByCategoryName(categoryDto.getCategoryName())
-//                .ifPresent({throw new NameDuplicateException("name duplicated", ResultCode.NAME_DUPLICATION);});
         Optional <CategoryEntity> categoryEntity = categoryRepository.findByCategoryName(categoryDto.getCategoryName());
         if(categoryEntity.isPresent()){
             throw new NameDuplicateException("name duplicated", ResultCode.NAME_DUPLICATION);
         }
-
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        CategoryEntity category = mapper.map(categoryDto, CategoryEntity.class);
+        CategoryEntity category = new ModelMapper().map(categoryDto, CategoryEntity.class);
 
         CategoryEntity result = categoryRepository.save(category);
 
@@ -100,6 +96,12 @@ public class QuizSettingServiceImpl implements QuizService {
 
         if(categoryEntity.isEmpty()){
             throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
+        }
+
+        Optional<QuizEntity> quizEntity = quizRepository.findByCategoryNum(categoryNum);
+
+        if(quizEntity.isPresent()){
+            throw new DataIntegrityViolationException("integrity constraint violation");
         }
         categoryRepository.deleteById(categoryNum);
     }
@@ -151,7 +153,7 @@ public class QuizSettingServiceImpl implements QuizService {
         quizDetail.setAnswerUserCount(0);
         quizDetail.setTrialUserCount(0);
 
-        //퀴즈디테일 추가하면서 주테이블인 퀴즈리스트에 없으면 함께 넣어줌
+        //퀴즈디테일 추가하면서 주테이블인 퀴즈info에 없으면 함께 넣어줌
         QuizDetailEntity quizDetailEntity = quizDetailRepository.save(quizDetail);
 
         QuizEntity result= quizDetailEntity.getQuizEntity();
@@ -165,7 +167,6 @@ public class QuizSettingServiceImpl implements QuizService {
     @Override
     public QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException {
         // 유저정보나 카테고리 변경시 업데이트되는지 확인 or 직접 함수호출
-//        QuizEntity quiz = new ModelMapper().map(quizDto, QuizEntity.class);
 
         Optional<CategoryEntity> categoryEntity = categoryRepository.findById(quizDto.getCategoryNum());
         if(categoryEntity.isEmpty()){
@@ -212,23 +213,9 @@ public class QuizSettingServiceImpl implements QuizService {
         if(quiz.get().getUserEntity().getUserId() != userId){
             throw new InvalidDataAccessApiUsageException("수정 권한이 없습니다.");
         }
-
         quizRepository.deleteById(quizNum);
     }
 
-//    //필요없음
-//    @Override
-//    public QuizDetailEntity createQuizDetail(QuizDetailDto quizDetailDto){
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        QuizDetailEntity quizDetail = mapper.map(quizDetailDto, QuizDetailEntity.class);
-//
-//        quizDetailRepository.save(quizDetail);
-//
-//        return quizDetail;
-//    }
-
-    //    //필요없음
     @Override
     public List<QuizDetailEntity> getQuizDetailByAll() {
         return quizDetailRepository.findAll();

@@ -66,7 +66,7 @@ public class QuizController {
     @PreAuthorize("hasAnyRole('ADMIN')")  //관리자 권한만 접근
     public ResponseEntity DeleteCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
         quizService.deleteCategory(categoryNum);
-        return ResponseEntity.status(HttpStatus.OK).body(categoryNum + "삭제 완료");
+        return ResponseEntity.status(HttpStatus.OK).body("category id : " + categoryNum + " 삭제 완료");
     }
 
     @GetMapping("/{quizNum}")
@@ -86,17 +86,19 @@ public class QuizController {
 
     @PutMapping("/update")
     public ResponseEntity updateQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
-        //사용자 변경 불가
+        //사용자 정보 변경 불가
         QuizEntity quizEntity = quizService.updateQuiz(requestQuiz);
         ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        System.out.println(requestQuiz.getQuizNum());
+
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
     @DeleteMapping("/delete/{quizNum}")
     public ResponseEntity DeleteQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid Long userId) throws IdNotExistException {
-        // 임시로 userId 전달.. 사용자를 받아오는 방법이 따로 있으면 변경할 예정
+        // 임시로 userId 전달.. 사용자 id를 받아오는 다른 방법있으면 변경할 예정
         quizService.deleteQuiz(quizNum, userId);
-        return ResponseEntity.status(HttpStatus.OK).body(quizNum + "삭제 완료");
+        return ResponseEntity.status(HttpStatus.OK).body("quiz id : " + quizNum + " 삭제 완료");
     }
 
     @PostMapping("/user/solution")
