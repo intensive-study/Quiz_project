@@ -25,15 +25,12 @@ public class QuizDetailEntity {
     private QuizEntity quizEntity;
 
     @Column(name = "answer_rate")
-    @ColumnDefault("0")
     private Integer answerRate;
 
     @Column(name = "trial_user_count")
-    @ColumnDefault("0")
     private Integer trialUserCount;
 
     @Column(name = "answer_user_count")
-    @ColumnDefault("0")
     private Integer answerUserCount;
 
 }

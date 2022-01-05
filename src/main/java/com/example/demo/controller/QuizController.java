@@ -6,6 +6,7 @@ import com.example.demo.dto.ResultOfUserSolutionDto;
 import com.example.demo.dto.SubmittedUserSolutionDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserQuizHistoryService;
@@ -35,9 +36,9 @@ public class QuizController {
     }
 
     @GetMapping
-    public List<QuizDto> getAllQuiz() {
+    public List<ResponseQuiz> getAllQuiz() {
         return this.quizService.getQuizByAll().stream()
-                .map(QuizDto::new).collect(Collectors.toList());
+                .map(ResponseQuiz::new).collect(Collectors.toList());
     }
 
     @GetMapping("/category")
@@ -60,22 +61,28 @@ public class QuizController {
     }
 
     @GetMapping("/{quizNum}")
-    public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum){
+    public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum) throws IdNotExistException {
 
-        QuizDto quizDto = quizService.getQuizByQuizNum(quizNum);
-        ResponseQuiz responseQuiz = new ModelMapper().map(quizDto, ResponseQuiz.class);
+        QuizEntity quizEntity = quizService.getQuizByQuizNum(quizNum);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
+    }
+
+    @PostMapping("/{quizNum}")
+    public ResponseEntity<ResponseQuiz> updateQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
+        //사용자 변경은 불가
+        QuizEntity quizEntity = quizService.updateQuiz(requestQuiz);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
     @PostMapping("/create")
-    public ResponseEntity createQuiz(@RequestBody @Valid RequestQuiz quiz){
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        QuizDto quizDto = mapper.map(quiz, QuizDto.class);
-        QuizEntity responseQuizEntity = quizService.createQuiz(quizDto);
+    public ResponseEntity createQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
+//        QuizDto quizDto = new ModelMapper().map(quiz, QuizDto.class);
+        QuizEntity quizEntity = quizService.createQuiz(requestQuiz);
 
-//        ResponseQuiz responseQuiz = mapper.map(responseQuizEntity, ResponseQuiz.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuizEntity);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
     }
 
     @PostMapping("/user/solution")
