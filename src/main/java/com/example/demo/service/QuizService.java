@@ -5,7 +5,10 @@ import com.example.demo.dto.QuizDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
+import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
+import com.example.demo.vo.RequestQuiz;
+import com.example.demo.vo.ResponseQuiz;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,16 +24,16 @@ public interface QuizService {
     CategoryEntity updateCategory(CategoryDto categoryDto);
 
     //퀴즈 관련
-    QuizEntity createQuiz(QuizDto quizDto);
+    QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException;
     List<QuizEntity> getQuizByAll();
-    QuizDto getQuizByQuizNum(Long quizNum);
+    QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException;
     
     @Transactional
     void deleteQuiz(Long quizNum);
     @Transactional
-    QuizEntity updateQuiz(QuizDto quizDto);
+    QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException;
     @Transactional
-    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum);
+    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) throws IdNotExistException;
 
 
     //필요없음

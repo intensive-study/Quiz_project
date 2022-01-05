@@ -20,4 +20,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, e.getResultCode().getStatus());
     }
 
+    @ExceptionHandler(IdNotExistException.class)
+    public ResponseEntity<ExceptionResponse> handleIdNotExistException(IdNotExistException e){
+        log.error("handleIdNotExistException",e);
+        ExceptionResponse response = new ExceptionResponse(e.getResultCode());
+        return new ResponseEntity<>(response, e.getResultCode().getStatus());
+    }
+
 }
