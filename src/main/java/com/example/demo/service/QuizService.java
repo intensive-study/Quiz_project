@@ -26,14 +26,14 @@ public interface QuizService {
     //퀴즈 관련
     QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException;
     List<QuizEntity> getQuizByAll();
-    QuizDto getQuizByQuizNum(Long quizNum);
+    QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException;
     
     @Transactional
     void deleteQuiz(Long quizNum);
     @Transactional
-    QuizEntity updateQuiz(QuizDto quizDto);
+    QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException;
     @Transactional
-    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum);
+    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) throws IdNotExistException;
 
 
     //필요없음

@@ -61,10 +61,18 @@ public class QuizController {
     }
 
     @GetMapping("/{quizNum}")
-    public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum){
+    public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum) throws IdNotExistException {
 
-        QuizDto quizDto = quizService.getQuizByQuizNum(quizNum);
-        ResponseQuiz responseQuiz = new ModelMapper().map(quizDto, ResponseQuiz.class);
+        QuizEntity quizEntity = quizService.getQuizByQuizNum(quizNum);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
+    }
+
+    @PostMapping("/{quizNum}")
+    public ResponseEntity<ResponseQuiz> updateQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
+        //사용자 변경은 불가
+        QuizEntity quizEntity = quizService.updateQuiz(requestQuiz);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
