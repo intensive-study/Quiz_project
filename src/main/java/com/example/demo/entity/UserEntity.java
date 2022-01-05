@@ -37,6 +37,7 @@ public class UserEntity {
 //    private String activation;
     @Column(name = "activated")
     private boolean activated;
+    @ColumnDefault("0.0")
     private float totalScore;
     @Column(nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp registerDate;
