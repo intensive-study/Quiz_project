@@ -29,7 +29,7 @@ public class UserDto {
     private String password;
     private String nickname;
     private String activation;
-    private Integer score;
+    private Double totalScore;
     private Set<AuthorityDto> authorityDtoSet;
 
     public static UserDto from(UserEntity user){

@@ -11,18 +11,12 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.relation.Role;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -91,6 +85,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Override
+    public Iterable<UserEntity> getUserRanking() {
+        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "totalScore"));
+    }
     @Override
     public UserDto updateByUserId(UserDto userDto) {
         return null;

@@ -34,12 +34,12 @@ public class UserQuizHistoryEntity {
     private Date solveTime;
 
     @Column(name="solve_score", nullable = false)
-    private float solveScore;
+    private double solveScore;
 
     @Column(name="is_solved", nullable = false)
     private boolean isSolved;
 
-    public UserQuizHistoryEntity(Long id, UserEntity userEntity, QuizEntity quizEntity, int trialCount, float solveScore, boolean isSolved){
+    public UserQuizHistoryEntity(Long id, UserEntity userEntity, QuizEntity quizEntity, int trialCount, double solveScore, boolean isSolved){
         this.id = id;
         this.userEntity = userEntity;
         this.quizEntity = quizEntity;

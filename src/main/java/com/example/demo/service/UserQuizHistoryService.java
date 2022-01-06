@@ -40,7 +40,7 @@ public class UserQuizHistoryService {
         UserQuizHistoryEntity userQuizHistoryEntity = userQuizHistoryRepository.findByQuizNumAndUserId(
                 quizEntity,
                 userEntity
-        ).orElse(new UserQuizHistoryEntity(0L, userEntity, quizEntity, 0, 0.0f, false));
+        ).orElse(new UserQuizHistoryEntity(0L, userEntity, quizEntity, 0, 0.0d, false));
 
         if(userQuizHistoryEntity.isSolved()) return null;
 
@@ -48,8 +48,8 @@ public class UserQuizHistoryService {
         userQuizHistoryEntity.setSolveTime(new Date());
 
         if (submittedUserSolutionDto.getAnswer().equals(quizEntity.getQuizAnswer())) {
-            float score = (float)quizEntity.getQuizScore() / userQuizHistoryEntity.getTrialCount();
-            score = Float.parseFloat(String.format("%.3f", score));
+            double score = (float)quizEntity.getQuizScore() / userQuizHistoryEntity.getTrialCount();
+            score = Math.round(score * 1000) / 1000.0;
             userQuizHistoryEntity.setSolved(true);
             userQuizHistoryEntity.setSolveScore(score);
             userQuizHistoryRepository.save(userQuizHistoryEntity);
