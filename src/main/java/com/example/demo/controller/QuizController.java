@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CategoryDto;
-import com.example.demo.dto.QuizDto;
-import com.example.demo.dto.ResultOfUserSolutionDto;
-import com.example.demo.dto.SubmittedUserSolutionDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizEntity;
 import com.example.demo.exception.IdNotExistException;

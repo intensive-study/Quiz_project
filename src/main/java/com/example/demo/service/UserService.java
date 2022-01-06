@@ -15,5 +15,6 @@ public interface UserService{
     UserDto getUserWithAuthorities(String username);
     UserDto getMyUserWithAuthorities();
     Iterable<UserEntity> getUsersByAll();
+    Iterable<UserEntity> getUserRanking();
     UserDto updateByUserId(UserDto userDto);
 }

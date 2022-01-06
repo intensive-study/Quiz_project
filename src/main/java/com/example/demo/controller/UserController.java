@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.UserDto;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.service.UserService;
 import com.example.demo.vo.RequestUser;
 import com.example.demo.vo.ResponseUser;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -35,26 +38,41 @@ public class UserController {
         return ResponseEntity.ok(userService.signup(userDto));
     }
 
-    @GetMapping("/users")
+    @GetMapping("/users/me")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserDto> getMyUserInfo(HttpServletRequest request){
         return ResponseEntity.ok(userService.getMyUserWithAuthorities());
     }
 
-    @GetMapping("/users/{username}")
+    @GetMapping("/admin/users")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<Iterable<UserEntity>> getAllUsers() {
+        return ResponseEntity.ok(userService.getUsersByAll());
+    }
+
+    @GetMapping("/admin/users/{username}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UserDto> getUserInfo(@PathVariable String username){
         return ResponseEntity.ok(userService.getUserWithAuthorities(username));
     }
 
-    @PostMapping("/users")
-    public ResponseEntity createUser(@RequestBody @Valid RequestUser user){
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        UserDto userDto = mapper.map(user, UserDto.class);
-        userService.signup(userDto);
-
-        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+    @GetMapping("/users/ranking")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserEntity> userList = userService.getUserRanking();
+        List<ResponseUser> resultList = new ArrayList<>();
+        userList.forEach(v->{
+            resultList.add(new ModelMapper().map(v, ResponseUser.class));
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(resultList);
     }
+    //    @PostMapping("/users")
+//    public ResponseEntity createUser(@RequestBody @Valid RequestUser user){
+//        ModelMapper mapper = new ModelMapper();
+//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+//        UserDto userDto = mapper.map(user, UserDto.class);
+//        userService.signup(userDto);
+//
+//        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+//    }
 }
