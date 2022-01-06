@@ -101,7 +101,7 @@ public class QuizSettingServiceImpl implements QuizService {
         //초기화
         QuizDetailEntity quizDetail = new QuizDetailEntity();
         quizDetail.setQuizEntity(quiz);
-        quizDetail.setAnswerRate(0);
+        quizDetail.setAnswerRate(0f);
         quizDetail.setAnswerUserCount(0);
         quizDetail.setTrialUserCount(0);
 
@@ -191,19 +191,24 @@ public class QuizSettingServiceImpl implements QuizService {
 
     @Override
     @Transactional
-    public QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) throws IdNotExistException {
+    public QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum, boolean isSolved){
 
         //나중에는 퀴즈히스토리로 받아와서 값 바꿀꺼임
         Optional<QuizDetailEntity> quizDetail = quizDetailRepository.findById(quizNum);
 
-        quizDetail.ifPresent(qD->{
-            qD.setTrialUserCount(1);
-            qD.setAnswerUserCount(1);
-            qD.setAnswerRate(1);
-        });
+        if(isSolved){
+            quizDetail.ifPresent(qD->{
+                qD.setTrialUserCount(qD.getTrialUserCount()+1);
+                qD.setAnswerUserCount(qD.getAnswerUserCount()+1);
+                qD.setAnswerRate((float)Math.floor((float)qD.getAnswerUserCount()/qD.getTrialUserCount()*100));
+            });
+        }
 
-        if(quizDetail.isEmpty()){
-            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
+        else{
+            quizDetail.ifPresent(qD->{
+                qD.setTrialUserCount(qD.getTrialUserCount()+1);
+                qD.setAnswerRate((float)Math.floor((float)qD.getAnswerUserCount()/qD.getTrialUserCount()*100));
+            });
         }
 
         return quizDetail.get();

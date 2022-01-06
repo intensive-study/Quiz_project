@@ -5,6 +5,7 @@ import com.example.demo.dto.QuizDto;
 import com.example.demo.dto.ResultOfUserSolutionDto;
 import com.example.demo.dto.SubmittedUserSolutionDto;
 import com.example.demo.entity.CategoryEntity;
+import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
 import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
@@ -89,6 +90,7 @@ public class QuizController {
     public ResponseEntity<ResultOfUserSolutionDto> checkUserSolution(@RequestBody @Valid SubmittedUserSolutionDto userSolutionDto){
         ResultOfUserSolutionDto resultOfUserSolutionDto = userQuizHistoryService.checkUserSolution(userSolutionDto);
         if(resultOfUserSolutionDto == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        quizService.updateQuizDetailByQuizNum(userSolutionDto.getQuizNum(), resultOfUserSolutionDto.isSolved());
         return ResponseEntity.status(HttpStatus.OK).body(resultOfUserSolutionDto);
     }
 }

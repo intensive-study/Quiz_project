@@ -25,7 +25,7 @@ public class QuizDetailEntity {
     private QuizEntity quizEntity;
 
     @Column(name = "answer_rate")
-    private Integer answerRate;
+    private Float answerRate;
 
     @Column(name = "trial_user_count")
     private Integer trialUserCount;

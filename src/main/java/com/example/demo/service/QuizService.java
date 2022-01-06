@@ -33,7 +33,7 @@ public interface QuizService {
     @Transactional
     QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException;
     @Transactional
-    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) throws IdNotExistException;
+    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum, boolean isSolved);
 
 
     //필요없음

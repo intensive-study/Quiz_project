@@ -28,9 +28,16 @@ public class AuthControllerTest {
     private ObjectMapper mapper;
 
     @Test
-    public void 로그인성공시_서버로부터_응답코드200을_받는다() throws Exception{
+    public void 로그인성공시_서버로부터_응답코드200_OK을_받는다() throws Exception{
         String json = mapper.writeValueAsString(new LoginDto("admin","admin"));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/authenticate").contentType(MediaType.APPLICATION_JSON).content(json);
         mockMvc.perform(requestBuilder).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void 로그인실패시_서버로부터_응답코드401_Unauthorized을_받는다() throws Exception{
+        String json = mapper.writeValueAsString(new LoginDto("admin","123"));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/authenticate").contentType(MediaType.APPLICATION_JSON).content(json);
+        mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized()).andDo(MockMvcResultHandlers.print());
     }
 }

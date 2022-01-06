@@ -11,13 +11,11 @@ public class SubmittedUserSolutionDto {
     private Long userId;
     private Long quizNum;
     private String answer;
-    private boolean solved;
 
-    public SubmittedUserSolutionDto(Long userId, Long quizNum, String answer, boolean solved) {
+    public SubmittedUserSolutionDto(Long userId, Long quizNum, String answer) {
         this.userId = userId;
         this.quizNum = quizNum;
         this.answer = answer;
-        this.solved = solved;
     }
 
 }
