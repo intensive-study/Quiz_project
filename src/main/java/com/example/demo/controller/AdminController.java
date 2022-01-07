@@ -8,6 +8,9 @@ import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserService;
+import com.example.demo.vo.ResponseUser;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +46,23 @@ public class AdminController {
     @GetMapping("/users/{username}")
     public ResponseEntity<UserDto> getUserInfo(@PathVariable String username){
         return ResponseEntity.ok(userService.getUserWithAuthorities(username));
+    }
+
+    // 유저 활성화
+    @PutMapping("/activate/{username}")
+    public ResponseEntity<ResponseUser> activateUser(@PathVariable String username){
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        return ResponseEntity.ok(mapper.map(userService.activateUser(username), ResponseUser.class));
+    }
+    // 유저 비활성화
+    @PutMapping("/deactivate/{username}")
+    public ResponseEntity<ResponseUser> deactivateUser(@PathVariable String username){
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        return ResponseEntity.ok(mapper.map(userService.deactivateUser(username), ResponseUser.class));
     }
 
     /*

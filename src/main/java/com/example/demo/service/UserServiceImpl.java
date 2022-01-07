@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService {
         return UserDto.from(SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername).orElse(null));
     }
 
+    // 작동 X
     @Override
     public UserDto getUserByUserId(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId);
@@ -92,5 +94,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateByUserId(UserDto userDto) {
         return null;
+    }
+
+    @Override
+    public UserDto activateUser(String username){
+        Optional<UserEntity> optionalUserEntity = userRepository.findOneWithAuthoritiesByUsername(username);
+        UserEntity user = optionalUserEntity.orElse(null);
+        user.setActivated(true);
+
+        return UserDto.from(userRepository.save(user));
+    }
+    @Override
+    public UserDto deactivateUser(String username){
+        Optional<UserEntity> optionalUserEntity = userRepository.findOneWithAuthoritiesByUsername(username);
+        UserEntity user = optionalUserEntity.orElse(null);
+        user.setActivated(false);
+
+        return UserDto.from(userRepository.save(user));
     }
 }
