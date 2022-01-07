@@ -17,5 +17,6 @@ public interface UserService{
     Iterable<UserEntity> getUsersByAll();
     Iterable<UserEntity> getUserRanking();
     UserDto updateByUserId(UserDto userDto);
+//    UserEntity getUserByUsername(String username);
     UserEntity getUserByUsername(String username) throws UsernameNotExistException;
 }

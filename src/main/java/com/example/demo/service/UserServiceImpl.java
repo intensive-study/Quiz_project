@@ -102,9 +102,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity getUserByUsername(String username) throws UsernameNotExistException {
         Optional <UserEntity> userEntity = userRepository.findByUsername(username);
-        if(userEntity.isEmpty()){
-            throw new UsernameNotExistException("username not exist", ResultCode.USERNAME_NOT_EXIST);
-        }
+        userEntity.orElseThrow(() -> new UsernameNotExistException("username not exist", ResultCode.USERNAME_NOT_EXIST));
         return userEntity.get();
     }
 }
