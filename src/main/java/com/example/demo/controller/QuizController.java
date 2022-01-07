@@ -1,20 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.CategoryEntity;
-import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
 import com.example.demo.exception.IdNotExistException;
-import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserQuizHistoryService;
 import com.example.demo.vo.*;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,6 +31,12 @@ public class QuizController {
     @GetMapping
     public List<ResponseQuiz> getAllQuiz() {
         return this.quizService.getQuizByAll().stream()
+                .map(ResponseQuiz::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/category/{categoryNum}")
+    public List<ResponseQuiz> getQuizByCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
+        return this.quizService.getQuizByCategoryNum(categoryNum).stream()
                 .map(ResponseQuiz::new).collect(Collectors.toList());
     }
 
