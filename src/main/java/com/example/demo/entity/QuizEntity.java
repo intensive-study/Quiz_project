@@ -3,14 +3,12 @@ package com.example.demo.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "QUIZ_LIST")
 @Getter @Setter
-//@DynamicUpdate //choice5: 값이 있는 경우, Null 값으로 변경 어려움
 @NoArgsConstructor
 public class QuizEntity {
     @Id
@@ -45,7 +43,5 @@ public class QuizEntity {
     private String choice3;
     private String choice4;
     private String choice5;
-
-    //생성자 필요하면 따로 생성
 
 }
