@@ -61,7 +61,7 @@ public class QuizControllerSettingTest {
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setCategoryName("운영체제");
         String json = mapper.writeValueAsString(categoryDto);
-        String URL = "/quiz/category/create";
+        String URL = "/admin/category/create";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON).content(json).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder).andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
     }
@@ -69,11 +69,11 @@ public class QuizControllerSettingTest {
     @Test
     @DisplayName("중복된 이름의 카테고리 생성시, 서버에서 상태코드 500을 받는다.")
     public void 중복PostCategory() throws Exception {
-        String token = this.로그인토큰("user", "password");
+        String token = this.로그인토큰("admin", "admin");
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setCategoryName("OS");
         String json = mapper.writeValueAsString(categoryDto);
-        String URL = "/quiz/category/create";
+        String URL = "/admin/category/create";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON).content(json).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder).andExpect(status().is5xxServerError()).andDo(MockMvcResultHandlers.print());
     }
@@ -82,7 +82,7 @@ public class QuizControllerSettingTest {
     @DisplayName("권한 없는 사용자가 카테고리 삭제 시, 서버에서 상태코드 403을 받는다.")
     public void InvalidDeleteCategory() throws Exception {
         String token = this.로그인토큰("user", "password");
-        String URL = "/quiz/category/delete/2";
+        String URL = "/admin/category/delete/2";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
     }
@@ -92,7 +92,7 @@ public class QuizControllerSettingTest {
     public void IntegrityDeleteCategory() throws Exception {
         String token = this.로그인토큰("admin", "admin");
 
-        String URL = "/quiz/category/delete/2";
+        String URL = "/admin/category/delete/2";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
     }
@@ -105,7 +105,7 @@ public class QuizControllerSettingTest {
         RequestBuilder requestBuilder1 = MockMvcRequestBuilders.delete(URL1).contentType(MediaType.APPLICATION_JSON).content(String.valueOf(1L)).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder1).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
 
-        String URL = "/quiz/category/delete/1";
+        String URL = "/admin/category/delete/1";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
     }
