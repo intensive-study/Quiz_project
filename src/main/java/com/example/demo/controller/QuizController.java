@@ -45,27 +45,6 @@ public class QuizController {
                 .map(CategoryDto::new).collect(Collectors.toList());
     }
 
-    @PostMapping("/category/create")
-    public ResponseEntity createCategory(@RequestBody CategoryDto categoryDto) throws NameDuplicateException {
-
-        CategoryEntity responseCategory = quizService.createQuizCategory(categoryDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseCategory);
-    }
-
-    @PutMapping("/category/update")
-    public ResponseEntity UpdateCategory(@RequestBody CategoryDto categoryDto) throws IdNotExistException {
-
-        CategoryEntity responseCategory = quizService.updateCategory(categoryDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseCategory);
-    }
-
-    @DeleteMapping("/category/delete/{categoryNum}")
-    @PreAuthorize("hasAnyRole('ADMIN')")  //관리자 권한만 접근
-    public ResponseEntity DeleteCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
-        quizService.deleteCategory(categoryNum);
-        return ResponseEntity.status(HttpStatus.OK).body("category id : " + categoryNum + " 삭제 완료");
-    }
-
     @GetMapping("/{quizNum}")
     public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum) throws IdNotExistException {
 

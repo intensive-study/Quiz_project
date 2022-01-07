@@ -39,21 +39,8 @@ public class UserController {
     }
 
     @GetMapping("/users/me")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserDto> getMyUserInfo(HttpServletRequest request){
         return ResponseEntity.ok(userService.getMyUserWithAuthorities());
-    }
-
-    @GetMapping("/admin/users")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<Iterable<UserEntity>> getAllUsers() {
-        return ResponseEntity.ok(userService.getUsersByAll());
-    }
-
-    @GetMapping("/admin/users/{username}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<UserDto> getUserInfo(@PathVariable String username){
-        return ResponseEntity.ok(userService.getUserWithAuthorities(username));
     }
 
     @GetMapping("/users/ranking")
@@ -65,14 +52,4 @@ public class UserController {
         });
         return ResponseEntity.status(HttpStatus.OK).body(resultList);
     }
-    //    @PostMapping("/users")
-//    public ResponseEntity createUser(@RequestBody @Valid RequestUser user){
-//        ModelMapper mapper = new ModelMapper();
-//        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        UserDto userDto = mapper.map(user, UserDto.class);
-//        userService.signup(userDto);
-//
-//        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
-//    }
 }
