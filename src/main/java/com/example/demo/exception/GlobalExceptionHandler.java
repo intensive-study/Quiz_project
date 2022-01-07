@@ -27,6 +27,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, e.getResultCode().getStatus());
     }
 
+    @ExceptionHandler(UsernameNotExistException.class)
+    public ResponseEntity<ExceptionResponse> handleUsernameExistException(UsernameNotExistException e){
+        log.error("handleUserNotExistException", e);
+        ExceptionResponse response = new ExceptionResponse(e.getResultCode());
+        return new ResponseEntity<>(response, e.getResultCode().getStatus());
+    }
+
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex) {
         log.error("handleInvalidDataAccessApiUsageException", ex);
