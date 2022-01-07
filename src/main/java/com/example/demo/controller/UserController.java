@@ -4,6 +4,7 @@ import com.example.demo.dto.UserDto;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.service.UserService;
 import com.example.demo.vo.ResponseUser;
+import com.example.demo.vo.ResponseUserRank;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,11 +42,11 @@ public class UserController {
     }
 
     @GetMapping("/users/ranking")
-    public ResponseEntity<List<ResponseUser>> getUsers() {
+    public ResponseEntity<List<ResponseUserRank>> getUserRanking() {
         Iterable<UserEntity> userList = userService.getUserRanking();
-        List<ResponseUser> resultList = new ArrayList<>();
+        List<ResponseUserRank> resultList = new ArrayList<>();
         userList.forEach(v->{
-            resultList.add(new ModelMapper().map(v, ResponseUser.class));
+            resultList.add(new ModelMapper().map(v, ResponseUserRank.class));
         });
         return ResponseEntity.status(HttpStatus.OK).body(resultList);
     }

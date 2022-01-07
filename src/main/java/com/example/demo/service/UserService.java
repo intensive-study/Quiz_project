@@ -17,6 +17,9 @@ public interface UserService{
     Iterable<UserEntity> getUsersByAll();
     Iterable<UserEntity> getUserRanking();
     UserDto updateByUserId(UserDto userDto);
-//    UserEntity getUserByUsername(String username);
     UserEntity getUserByUsername(String username) throws UsernameNotExistException;
+    // User 활성화 하기(관리자 모드)
+    UserDto activateUser(String username);
+    // User 비활성화 하기(관리자 모드)
+    UserDto deactivateUser(String username);
 }

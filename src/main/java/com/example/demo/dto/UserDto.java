@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,15 +28,20 @@ public class UserDto {
     private String username;
     private String password;
     private String nickname;
-    private boolean activation;
+    private Boolean activated;
     private Double totalScore;
+    private Timestamp registerDate;
     private Set<AuthorityDto> authorityDtoSet;
 
     public static UserDto from(UserEntity user){
         if(user == null) return null;
         return UserDto.builder()
                 .username(user.getUsername())
+                .password(user.getPassword())
                 .nickname(user.getNickname())
+                .activated(user.isActivated())
+                .totalScore(user.getTotalScore())
+                .registerDate(user.getRegisterDate())
                 .authorityDtoSet(user.getAuthorities().stream()
                         .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
                         .collect(Collectors.toSet()))
