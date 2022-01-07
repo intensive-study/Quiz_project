@@ -87,15 +87,16 @@ public class QuizControllerSettingTest {
         mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
-    @DisplayName("해당 카테고리에 퀴즈가 있는 경우 삭제되지 않는다. 서버에서 상태코드 406을 받는다.")
-    public void IntegrityDeleteCategory() throws Exception {
-        String token = this.로그인토큰("admin", "admin");
-
-        String URL = "/admin/category/delete/2";
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
-        mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
-    }
+    //퀴즈가 있는 경우에도 삭제된다.
+//    @Test
+//    @DisplayName("해당 카테고리에 퀴즈가 있는 경우 삭제되지 않는다. 서버에서 상태코드 406을 받는다.")
+//    public void IntegrityDeleteCategory() throws Exception {
+//        String token = this.로그인토큰("admin", "admin");
+//
+//        String URL = "/admin/category/delete/2";
+//        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
+//        mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
+//    }
 
     @Test
     @DisplayName("카테고리 안에 퀴즈가 없으면 admin 권한으로 삭제하고 서버에서 상태코드 200을 받는다.")

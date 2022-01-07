@@ -35,6 +35,8 @@ public interface QuizService {
     List<QuizEntity> getQuizByAll();
     //개별 조회
     QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException;
+    //카테고리별 조회
+    List<QuizEntity> getQuizByCategoryNum(Long CategoryNum) throws IdNotExistException;
     //생성
     QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException;
     //변경

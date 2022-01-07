@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CategoryDto;
-import com.example.demo.dto.QuizDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
@@ -15,10 +14,7 @@ import com.example.demo.jpa.QuizRepository;
 import com.example.demo.jpa.UserRepository;
 import com.example.demo.vo.RequestQuiz;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -98,12 +95,13 @@ public class QuizSettingServiceImpl implements QuizService {
         if(categoryEntity.isEmpty()){
             throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
         }
+        quizRepository.updateCategoryNull(categoryNum);
 
-        Collection<QuizEntity> quizEntity = quizRepository.findByCategoryNum(categoryNum);
-
-        if(!quizEntity.isEmpty()){
-            throw new DataIntegrityViolationException("integrity constraint violation");
-        }
+        // 카테고리 삭제 전에 퀴즈 있는지 확인
+//        Collection<QuizEntity> quizEntity = quizRepository.findByCategoryNum(categoryNum);
+//        if(!quizEntity.isEmpty()){
+//            throw new DataIntegrityViolationException("integrity constraint violation");
+//        }
         categoryRepository.deleteById(categoryNum);
     }
 
@@ -125,6 +123,23 @@ public class QuizSettingServiceImpl implements QuizService {
             throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
         }
         return quizEntity.get();
+    }
+    /**
+     * 카테고리 별 퀴즈 조회
+     */
+    @Override
+    public List<QuizEntity> getQuizByCategoryNum(Long requestNum) throws IdNotExistException {
+        Collection<QuizEntity> quizEntity = null;
+        if (requestNum == 0 ){
+            quizEntity = quizRepository.findByCategoryNull();
+        }
+        else {
+            quizEntity = quizRepository.findByCategoryNum(requestNum);
+        }
+        if(quizEntity.isEmpty()){
+            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
+        }
+        return quizEntity.stream().collect(Collectors.toList());
     }
 
     /**
@@ -154,7 +169,7 @@ public class QuizSettingServiceImpl implements QuizService {
         quizDetail.setAnswerUserCount(0);
         quizDetail.setTrialUserCount(0);
 
-        //퀴즈디테일 추가하면서 주테이블인 퀴즈info에 없으면 함께 넣어줌
+        //퀴즈디테일 추가하면서 주테이블인 퀴즈리스트에 없으면 함께 넣어줌
         QuizDetailEntity quizDetailEntity = quizDetailRepository.save(quizDetail);
 
         QuizEntity result= quizDetailEntity.getQuizEntity();
