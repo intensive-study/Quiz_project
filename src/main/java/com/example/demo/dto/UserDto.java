@@ -23,12 +23,11 @@ public class UserDto {
 
 //    @NotNull
 //    @Size(min = 3, max = 50)
-//    private String userId;
-//    private String email;
+    private Long userId;
     private String username;
     private String password;
     private String nickname;
-    private String activation;
+    private boolean activation;
     private Double totalScore;
     private Set<AuthorityDto> authorityDtoSet;
 

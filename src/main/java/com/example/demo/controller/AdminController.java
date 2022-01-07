@@ -6,8 +6,10 @@ import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
+import com.example.demo.exception.UsernameNotExistException;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserService;
+import com.example.demo.vo.ResponseUsername;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +43,10 @@ public class AdminController {
 
     // {username} 회원 정보 조회
     @GetMapping("/users/{username}")
-    public ResponseEntity<UserDto> getUserInfo(@PathVariable String username){
-        return ResponseEntity.ok(userService.getUserWithAuthorities(username));
+    public ResponseEntity<ResponseUsername> getUserInfo(@PathVariable String username) throws UsernameNotExistException {
+        UserEntity userEntity = userService.getUserByUsername(username);
+        ResponseUsername responseUsername = new ResponseUsername(userEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(responseUsername);
     }
 
     /*

@@ -3,6 +3,9 @@ package com.example.demo.service;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.Authority;
 import com.example.demo.entity.UserEntity;
+import com.example.demo.exception.IdNotExistException;
+import com.example.demo.exception.ResultCode;
+import com.example.demo.exception.UsernameNotExistException;
 import com.example.demo.jpa.UserRepository;
 import com.example.demo.util.SecurityUtil;
 import com.sun.jdi.request.DuplicateRequestException;
@@ -16,7 +19,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.NameNotFoundException;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -61,8 +66,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDto getMyUserWithAuthorities(){
-        return UserDto.from(SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername).orElse(null));
+    public Optional<UserEntity> getMyUserWithAuthorities(){
+        return SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
     }
 
     @Override
@@ -92,5 +97,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateByUserId(UserDto userDto) {
         return null;
+    }
+
+    @Override
+    public UserEntity getUserByUsername(String username) throws UsernameNotExistException {
+        Optional <UserEntity> userEntity = userRepository.findByUsername(username);
+        if(userEntity.isEmpty()){
+            throw new UsernameNotExistException("username not exist", ResultCode.USERNAME_NOT_EXIST);
+        }
+        return userEntity.get();
     }
 }
