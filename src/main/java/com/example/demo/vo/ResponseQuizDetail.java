@@ -10,7 +10,7 @@ import lombok.Setter;
 @Builder
 public class ResponseQuizDetail {
     private Long quizNum;
-    private Integer answerRate;
+    private Float answerRate;
     private Integer trialUserCount;
     private Integer answerUserCount;
 

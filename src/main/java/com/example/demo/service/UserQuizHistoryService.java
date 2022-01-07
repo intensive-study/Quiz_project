@@ -27,10 +27,9 @@ public class UserQuizHistoryService {
         this.quizRepository = quizRepository;
         this.userRepository = userRepository;
     }
+
     @Transactional
     public ResultOfUserSolutionDto checkUserSolution(SubmittedUserSolutionDto submittedUserSolutionDto) {
-        if (submittedUserSolutionDto.isSolved()) return null;
-
         QuizEntity quizEntity = quizRepository.findById(submittedUserSolutionDto.getQuizNum())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈ID" + submittedUserSolutionDto.getQuizNum()));
 
@@ -42,6 +41,8 @@ public class UserQuizHistoryService {
                 quizEntity,
                 userEntity
         ).orElse(new UserQuizHistoryEntity(0L, userEntity, quizEntity, 0, 0.0d, false));
+
+        if(userQuizHistoryEntity.isSolved()) return null;
 
         userQuizHistoryEntity.setTrialCount(userQuizHistoryEntity.getTrialCount() + 1);
         userQuizHistoryEntity.setSolveTime(new Date());
