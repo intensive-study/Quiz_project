@@ -49,7 +49,7 @@ public interface QuizService {
      */
     //카운트
     @Transactional
-    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum) throws IdNotExistException;
+    QuizDetailEntity updateQuizDetailByQuizNum(Long quizNum, boolean isSolved);
 
 
     //필요없음
