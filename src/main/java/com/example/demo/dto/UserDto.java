@@ -28,7 +28,7 @@ public class UserDto {
     private String username;
     private String password;
     private String nickname;
-    private String activation;
+    private Boolean activated;
     private Double totalScore;
     private Set<AuthorityDto> authorityDtoSet;
 
@@ -36,7 +36,10 @@ public class UserDto {
         if(user == null) return null;
         return UserDto.builder()
                 .username(user.getUsername())
+                .password(user.getPassword())
                 .nickname(user.getNickname())
+                .activated(user.isActivated())
+                .totalScore(user.getTotalScore())
                 .authorityDtoSet(user.getAuthorities().stream()
                         .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
                         .collect(Collectors.toSet()))
