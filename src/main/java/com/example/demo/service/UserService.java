@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.UserEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.example.demo.exception.UsernameNotExistException;
 
 import java.util.Optional;
 
@@ -13,10 +13,11 @@ public interface UserService{
     UserDto getUserByUserId(String userId);
     UserDto signup(UserDto userDto);
     UserDto getUserWithAuthorities(String username);
-    UserDto getMyUserWithAuthorities();
+    Optional<UserEntity> getMyUserWithAuthorities();
     Iterable<UserEntity> getUsersByAll();
     Iterable<UserEntity> getUserRanking();
     UserDto updateByUserId(UserDto userDto);
+    UserEntity getUserByUsername(String username) throws UsernameNotExistException;
     // User 활성화 하기(관리자 모드)
     UserDto activateUser(String username);
     // User 비활성화 하기(관리자 모드)

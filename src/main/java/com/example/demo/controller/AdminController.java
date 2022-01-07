@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CategoryDto;
-import com.example.demo.dto.UserDto;
 import com.example.demo.entity.CategoryEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.NameDuplicateException;
+import com.example.demo.exception.UsernameNotExistException;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserService;
 import com.example.demo.vo.ResponseUser;
@@ -42,10 +42,11 @@ public class AdminController {
         return ResponseEntity.ok(userService.getUsersByAll());
     }
 
-    // {username} 회원 정보 조회
     @GetMapping("/users/{username}")
-    public ResponseEntity<UserDto> getUserInfo(@PathVariable String username){
-        return ResponseEntity.ok(userService.getUserWithAuthorities(username));
+    public ResponseEntity<ResponseUser> getUserInfo(@PathVariable String username) throws UsernameNotExistException {
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return  ResponseEntity.ok(mapper.map(userService.getUserByUsername(username), ResponseUser.class));
     }
 
     // 유저 활성화

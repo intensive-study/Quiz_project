@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.Authority;
 import com.example.demo.entity.UserEntity;
+import com.example.demo.exception.ResultCode;
+import com.example.demo.exception.UsernameNotExistException;
 import com.example.demo.jpa.UserRepository;
 import com.example.demo.util.SecurityUtil;
 import com.sun.jdi.request.DuplicateRequestException;
@@ -62,8 +64,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDto getMyUserWithAuthorities(){
-        return UserDto.from(SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername).orElse(null));
+    public Optional<UserEntity> getMyUserWithAuthorities(){
+        return SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
     }
 
     // 작동 X
@@ -94,6 +96,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateByUserId(UserDto userDto) {
         return null;
+    }
+
+    @Override
+    public UserEntity getUserByUsername(String username) throws UsernameNotExistException {
+        Optional <UserEntity> userEntity = userRepository.findByUsername(username);
+        userEntity.orElseThrow(() -> new UsernameNotExistException("username not exist", ResultCode.USERNAME_NOT_EXIST));
+        return userEntity.get();
     }
 
     @Override
