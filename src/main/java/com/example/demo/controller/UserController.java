@@ -58,7 +58,7 @@ public class UserController {
     @PutMapping("/users/me")
     public ResponseEntity updateUser(@RequestBody @Valid RequestUser requestUser) {
         UserEntity userEntity = userService.updateUser(requestUser);
-        ResponseUser responseUser = new ResponseUser(userEntity);
+        ResponseUserEntity responseUser = new ResponseUserEntity(userEntity);
         System.out.println(requestUser.getUsername());
 
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);

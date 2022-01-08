@@ -21,16 +21,4 @@ public class ResponseUser {
     private Boolean activated;
     private Timestamp registerDate;
     private Set<AuthorityDto> authorityDtoSet;
-
-    public ResponseUser(UserEntity userEntity) {
-        this.username = userEntity.getUsername();
-        this.password = userEntity.getPassword();
-        this.nickname = userEntity.getNickname();
-        this.totalScore = userEntity.getTotalScore();
-        this.activated = userEntity.isActivated();
-        this.registerDate = userEntity.getRegisterDate();
-        this.authorityDtoSet = userEntity.getAuthorities().stream()
-                .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
-                .collect(Collectors.toSet());
-    }
 }
