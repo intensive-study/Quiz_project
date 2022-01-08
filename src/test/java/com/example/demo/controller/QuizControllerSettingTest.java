@@ -95,13 +95,13 @@ public class QuizControllerSettingTest {
 //    }
 
     @Test
-    @DisplayName("admin 권한으로 삭제하고 서버에서 상태코드 204(no content)을 받는다.")
+    @DisplayName("admin 권한으로 삭제하고 서버에서 상태코드 200을 받는다.")
     public void DeleteCategory() throws Exception {
         String token = this.로그인토큰("admin", "admin");
 
         String URL = "/admin/category/1";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
-        mockMvc.perform(requestBuilder).andExpect(status().isNoContent()).andDo(MockMvcResultHandlers.print());
+        mockMvc.perform(requestBuilder).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
     }
 
     @Test
