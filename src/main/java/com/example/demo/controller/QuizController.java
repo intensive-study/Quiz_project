@@ -68,14 +68,14 @@ public class QuizController {
         ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
         System.out.println(requestQuiz.getQuizNum());
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
     }
 
     @DeleteMapping("/{quizNum}")
     public ResponseEntity DeleteQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid Long userId) throws IdNotExistException {
         // 임시로 userId 전달.. 사용자 id를 받아오는 다른 방법있으면 변경할 예정
         quizService.deleteQuiz(quizNum, userId);
-        return ResponseEntity.status(HttpStatus.OK).body("quiz id : " + quizNum + " 삭제 완료");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("quiz id : " + quizNum + " 삭제 완료");
     }
 
     @PostMapping("/user/solution")

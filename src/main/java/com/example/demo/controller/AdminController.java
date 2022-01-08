@@ -92,7 +92,7 @@ public class AdminController {
     @DeleteMapping("/category/{categoryNum}")
     public ResponseEntity DeleteCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
         quizService.deleteCategory(categoryNum);
-        return ResponseEntity.status(HttpStatus.OK).body("category id : " + categoryNum + " 삭제 완료");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("category id : " + categoryNum + " 삭제 완료");
     }
 
 }
