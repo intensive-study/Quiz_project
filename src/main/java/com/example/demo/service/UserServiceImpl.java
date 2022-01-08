@@ -2,17 +2,21 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.Authority;
+import com.example.demo.entity.QuizEntity;
 import com.example.demo.entity.UserEntity;
+import com.example.demo.exception.IdNotExistException;
 import com.example.demo.exception.ResultCode;
 import com.example.demo.exception.UsernameNotExistException;
 import com.example.demo.jpa.UserRepository;
 import com.example.demo.util.SecurityUtil;
+import com.example.demo.vo.RequestUser;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,21 +72,6 @@ public class UserServiceImpl implements UserService {
         return SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
     }
 
-    // 작동 X
-    @Override
-    public UserDto getUserByUserId(String userId) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
-//        예외처리 해줘야 함
-//        if(userEntity == null){
-//
-//        }
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        UserDto userDto = modelMapper.map(userEntity, UserDto.class);
-
-        return userDto;
-    }
-
     //전체 사용자 조회(랭크 보여줄 때 사용)
     @Override
     public Iterable<UserEntity> getUsersByAll() {
@@ -92,10 +81,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Iterable<UserEntity> getUserRanking() {
         return userRepository.findAll(Sort.by(Sort.Direction.DESC, "totalScore"));
-    }
-    @Override
-    public UserDto updateByUserId(UserDto userDto) {
-        return null;
     }
 
     @Override
@@ -120,5 +105,18 @@ public class UserServiceImpl implements UserService {
         user.setActivated(false);
 
         return UserDto.from(userRepository.save(user));
+    }
+
+    @Override
+    public UserEntity updateUser(RequestUser requestUser){
+        Optional<UserEntity> optionalUserEntity = userRepository.findOneWithAuthoritiesByUsername(requestUser.getUsername());
+        UserEntity user = optionalUserEntity.orElse(null);
+        user.setUsername(requestUser.getUsername());
+        user.setPassword(requestUser.getPassword());
+        if(user.getNickname()==null && requestUser.getNickname() != null){
+            user.setNickname(requestUser.getNickname());
+        }
+        user.setActivated(requestUser.getActivated());
+        return userRepository.save(user);
     }
 }

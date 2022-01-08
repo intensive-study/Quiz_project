@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.UserDto;
+import com.example.demo.entity.QuizEntity;
 import com.example.demo.entity.UserEntity;
+import com.example.demo.exception.IdNotExistException;
+import com.example.demo.exception.UsernameNotExistException;
+import com.example.demo.jpa.UserRepository;
 import com.example.demo.service.UserService;
-import com.example.demo.vo.ResponseUser;
-import com.example.demo.vo.ResponseUserRank;
+import com.example.demo.vo.*;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,5 +53,14 @@ public class UserController {
             resultList.add(new ModelMapper().map(v, ResponseUserRank.class));
         });
         return ResponseEntity.status(HttpStatus.OK).body(resultList);
+    }
+
+    @PutMapping("/users/me")
+    public ResponseEntity updateUser(@RequestBody @Valid RequestUser requestUser) {
+        UserEntity userEntity = userService.updateUser(requestUser);
+        ResponseUser responseUser = new ResponseUser(userEntity);
+        System.out.println(requestUser.getUsername());
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }
 }
