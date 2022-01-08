@@ -68,7 +68,7 @@ public class QuizController {
         ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
         System.out.println(requestQuiz.getQuizNum());
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
     }
 
     @DeleteMapping("/{quizNum}")
