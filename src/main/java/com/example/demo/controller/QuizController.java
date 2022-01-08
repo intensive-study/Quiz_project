@@ -1,20 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.CategoryEntity;
-import com.example.demo.entity.QuizDetailEntity;
 import com.example.demo.entity.QuizEntity;
 import com.example.demo.exception.IdNotExistException;
-import com.example.demo.exception.NameDuplicateException;
 import com.example.demo.service.QuizService;
 import com.example.demo.service.UserQuizHistoryService;
 import com.example.demo.vo.*;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,6 +34,12 @@ public class QuizController {
                 .map(ResponseQuiz::new).collect(Collectors.toList());
     }
 
+    @GetMapping("/category/{categoryNum}")
+    public List<ResponseQuiz> getQuizByCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
+        return this.quizService.getQuizByCategoryNum(categoryNum).stream()
+                .map(ResponseQuiz::new).collect(Collectors.toList());
+    }
+
     @GetMapping("/category")
     public List<CategoryDto> getAllCategory() {
         return this.quizService.getCategoryByAll().stream()
@@ -54,14 +54,14 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity createQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
         QuizEntity quizEntity = quizService.createQuiz(requestQuiz);
         ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
     }
 
-    @PutMapping("/update")
+    @PutMapping()
     public ResponseEntity updateQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
         //사용자 정보 변경 불가
         QuizEntity quizEntity = quizService.updateQuiz(requestQuiz);
@@ -71,7 +71,7 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
-    @DeleteMapping("/delete/{quizNum}")
+    @DeleteMapping("/{quizNum}")
     public ResponseEntity DeleteQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid Long userId) throws IdNotExistException {
         // 임시로 userId 전달.. 사용자 id를 받아오는 다른 방법있으면 변경할 예정
         quizService.deleteQuiz(quizNum, userId);
