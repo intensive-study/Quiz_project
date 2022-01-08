@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = optionalUserEntity.orElse(null);
         user.setUsername(requestUser.getUsername());
         user.setPassword(requestUser.getPassword());
-        if(user.getNickname()==null && requestUser.getNickname() != null){
+        if(requestUser.getNickname() != null){
             user.setNickname(requestUser.getNickname());
         }
         user.setActivated(requestUser.getActivated());
