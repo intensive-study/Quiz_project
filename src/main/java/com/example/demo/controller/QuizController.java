@@ -54,14 +54,14 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity createQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
         QuizEntity quizEntity = quizService.createQuiz(requestQuiz);
         ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
     }
 
-    @PutMapping("/update")
+    @PutMapping()
     public ResponseEntity updateQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
         //사용자 정보 변경 불가
         QuizEntity quizEntity = quizService.updateQuiz(requestQuiz);
@@ -71,7 +71,7 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
-    @DeleteMapping("/delete/{quizNum}")
+    @DeleteMapping("/{quizNum}")
     public ResponseEntity DeleteQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid Long userId) throws IdNotExistException {
         // 임시로 userId 전달.. 사용자 id를 받아오는 다른 방법있으면 변경할 예정
         quizService.deleteQuiz(quizNum, userId);
