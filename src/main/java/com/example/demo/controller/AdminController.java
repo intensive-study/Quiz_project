@@ -86,7 +86,7 @@ public class AdminController {
     public ResponseEntity UpdateCategory(@RequestBody CategoryDto categoryDto) throws IdNotExistException {
 
         CategoryEntity responseCategory = quizService.updateCategory(categoryDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseCategory);
     }
 
     @DeleteMapping("/category/{categoryNum}")
