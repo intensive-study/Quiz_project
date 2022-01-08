@@ -55,7 +55,7 @@ public class AdminController {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        return ResponseEntity.ok(mapper.map(userService.activateUser(username), ResponseUser.class));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(userService.activateUser(username), ResponseUser.class));
     }
     // 유저 비활성화
     @PutMapping("/deactivate/{username}")
@@ -63,7 +63,7 @@ public class AdminController {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        return ResponseEntity.ok(mapper.map(userService.deactivateUser(username), ResponseUser.class));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(userService.deactivateUser(username), ResponseUser.class));
     }
 
     /*
