@@ -75,21 +75,21 @@ public class AdminController {
                 .map(CategoryDto::new).collect(Collectors.toList());
     }
 
-    @PostMapping("/category/create")
+    @PostMapping("/category")
     public ResponseEntity createCategory(@RequestBody CategoryDto categoryDto) throws NameDuplicateException {
 
         CategoryEntity responseCategory = quizService.createQuizCategory(categoryDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseCategory);
     }
 
-    @PutMapping("/category/update")
+    @PutMapping("/category")
     public ResponseEntity UpdateCategory(@RequestBody CategoryDto categoryDto) throws IdNotExistException {
 
         CategoryEntity responseCategory = quizService.updateCategory(categoryDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseCategory);
     }
 
-    @DeleteMapping("/category/delete/{categoryNum}")
+    @DeleteMapping("/category/{categoryNum}")
     public ResponseEntity DeleteCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
         quizService.deleteCategory(categoryNum);
         return ResponseEntity.status(HttpStatus.OK).body("category id : " + categoryNum + " 삭제 완료");
