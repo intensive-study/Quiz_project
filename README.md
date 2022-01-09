@@ -10,7 +10,8 @@
 
 👨‍💻 **투입인원** : 4명
 
-📒 **주요 기능** 
+📒 **주요 기능**  
+[여기를 클릭해 주세요!](https://github.com/intensive-study/SpringProject_new/wiki)
 
 
 🌱 **프레임워크 및 라이브러리**
