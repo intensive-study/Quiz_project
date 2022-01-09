@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.LoginDto;
 import com.example.demo.dto.TokenDto;
+import com.example.demo.entity.UserEntity;
+import com.example.demo.jpa.UserRepository;
 import com.example.demo.jwt.JwtFilter;
 import com.example.demo.jwt.TokenProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +20,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Slf4j
 @RestController
 public class AuthController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserRepository userRepository;
 
-    public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder){
+    public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserRepository userRepository){
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
@@ -41,7 +46,8 @@ public class AuthController {
 
         String jwt = tokenProvider.createToken(authentication);
         HttpHeaders headers = new HttpHeaders();
+        Optional<UserEntity> user = userRepository.findOneWithAuthoritiesByUsername(loginDto.getUsername());
         headers.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        return new ResponseEntity<>(new TokenDto(jwt), headers, HttpStatus.OK);
+        return new ResponseEntity<>(new TokenDto(jwt, user.get().getUserId()), headers, HttpStatus.OK);
     }
 }
