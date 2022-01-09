@@ -12,7 +12,7 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @Setter
 @NoArgsConstructor
 public class CategoryDto {
-    private Integer categoryNum;
+    private Long categoryNum;
     private String categoryName;
 
     public CategoryDto(CategoryEntity source){

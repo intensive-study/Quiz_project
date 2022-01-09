@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CategoryDto;
-import com.example.demo.dto.QuizDto;
+import com.example.demo.dto.*;
+import com.example.demo.entity.QuizEntity;
+import com.example.demo.exception.IdNotExistException;
 import com.example.demo.service.QuizService;
-import com.example.demo.vo.RequestUser;
-import com.example.demo.vo.ResponseUser;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
+import com.example.demo.service.UserQuizHistoryService;
+import com.example.demo.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +20,24 @@ import java.util.stream.Collectors;
 public class QuizController {
 
     private final QuizService quizService;
+    private final UserQuizHistoryService userQuizHistoryService;
 
     @Autowired
-    public QuizController(QuizService quizService){
+    public QuizController(QuizService quizService, UserQuizHistoryService userQuizHistoryService){
         this.quizService = quizService;
+        this.userQuizHistoryService = userQuizHistoryService;
     }
 
     @GetMapping
-    public List<QuizDto> getAllQuiz() {
+    public List<ResponseQuiz> getAllQuiz() {
         return this.quizService.getQuizByAll().stream()
-                .map(QuizDto::new).collect(Collectors.toList());
+                .map(ResponseQuiz::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/category/{categoryNum}")
+    public List<ResponseQuiz> getQuizByCategory(@PathVariable("categoryNum") Long categoryNum) throws IdNotExistException {
+        return this.quizService.getQuizByCategoryNum(categoryNum).stream()
+                .map(ResponseQuiz::new).collect(Collectors.toList());
     }
 
     @GetMapping("/category")
@@ -39,33 +46,43 @@ public class QuizController {
                 .map(CategoryDto::new).collect(Collectors.toList());
     }
 
-    @PostMapping("/category/create")
-    public ResponseEntity createCategory(@RequestBody @Valid RequestUser category){
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
-        quizService.createQuizCategory(categoryDto);
-
-        ResponseUser responseUser = mapper.map(categoryDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
-    }
-
     @GetMapping("/{quizNum}")
-    public ResponseEntity<ResponseUser> getQuiz(@PathVariable("quizNum") Long quizNum){
+    public ResponseEntity<ResponseQuiz> getQuiz(@PathVariable("quizNum") Long quizNum) throws IdNotExistException {
 
-        QuizDto quizDto = quizService.getQuizByQuizNum(quizNum);
-        ResponseUser responseUser = new ModelMapper().map(quizDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.OK).body(responseUser);
+        QuizEntity quizEntity = quizService.getQuizByQuizNum(quizNum);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(responseQuiz);
     }
 
-    @PostMapping("/setting")
-    public ResponseEntity createQuiz(@RequestBody @Valid RequestUser quiz){
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        QuizDto quizDto = mapper.map(quiz, QuizDto.class);
-        quizService.createQuiz(quizDto);
+    @PostMapping()
+    public ResponseEntity createQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
+        QuizEntity quizEntity = quizService.createQuiz(requestQuiz);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
+    }
 
-        ResponseUser responseUser = mapper.map(quizDto, ResponseUser.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+    @PutMapping()
+    public ResponseEntity updateQuiz(@RequestBody @Valid RequestQuiz requestQuiz) throws IdNotExistException {
+        //사용자 정보 변경 불가
+        QuizEntity quizEntity = quizService.updateQuiz(requestQuiz);
+        ResponseQuiz responseQuiz = new ResponseQuiz(quizEntity);
+        System.out.println(requestQuiz.getQuizNum());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseQuiz);
+    }
+
+    @DeleteMapping("/{quizNum}")
+    public ResponseEntity DeleteQuiz(@PathVariable("quizNum") Long quizNum, @RequestBody @Valid RequestUserId userId) throws IdNotExistException {
+        // 임시로 userId 전달.. 사용자 id를 받아오는 다른 방법있으면 변경할 예정
+        quizService.deleteQuiz(quizNum, userId.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body("quiz id : " + quizNum + " 삭제 완료");
+    }
+
+    @PostMapping("/user/solution")
+    public ResponseEntity<ResultOfUserSolutionDto> checkUserSolution(@RequestBody @Valid SubmittedUserSolutionDto userSolutionDto){
+        ResultOfUserSolutionDto resultOfUserSolutionDto = userQuizHistoryService.checkUserSolution(userSolutionDto);
+        if(resultOfUserSolutionDto == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        quizService.updateQuizDetailByQuizNum(userSolutionDto.getQuizNum(), resultOfUserSolutionDto.isSolved());
+        return ResponseEntity.status(HttpStatus.OK).body(resultOfUserSolutionDto);
     }
 }
