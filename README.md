@@ -16,6 +16,6 @@
 
 🌱 **프레임워크 및 라이브러리**
 
-백엔드 : `Spring Boot` `JPA` 
+백엔드 : `Spring Boot` `JPA` `Spring Security`  
 협업 툴 : `github` `discord`
 
