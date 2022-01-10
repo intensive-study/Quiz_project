@@ -43,16 +43,17 @@ public class QuizControllerSettingTest {
         MvcResult requestResult = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andReturn();
+        String result = requestResult.getResponse().getContentAsString();
 
-        String token = JsonPath.read(requestResult.getResponse().getContentAsString(), "$.token");
-        System.out.println(token);
+        String token = JsonPath.read(result, "$.token");
+//        String userId = JsonPath.read(result, "$.userId");
 
         return "Bearer " + token;
     }
 
     @Test
     @DisplayName("새로운 카테고리 생성시, 서버에서 상태코드 201(create)을 받는다.")
-    public void PostCategory() throws Exception {
+    public void CreateCategory() throws Exception {
         String token = this.로그인토큰("admin", "admin");
         CategoryDto categoryDto = new CategoryDto();
         categoryDto.setCategoryName("운영체제");
@@ -101,7 +102,6 @@ public class QuizControllerSettingTest {
                 .quizContents("내용")
                 .quizAnswer("choice1")
                 .quizScore(5)
-                .userId(1L)
                 .categoryNum(2L)
                 .choice1("ooooooo")
                 .choice3("xxxxxxx")
@@ -118,25 +118,6 @@ public class QuizControllerSettingTest {
         RequestQuiz requestQuiz = RequestQuiz.builder()
                 .quizContents("내용")
                 .quizScore(5)
-                .userId(1L)
-                .build();
-        String json = mapper.writeValueAsString(requestQuiz);
-        String URL = "/quiz";
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.post(URL).contentType(MediaType.APPLICATION_JSON).content(json).header(HttpHeaders.AUTHORIZATION, token);
-        mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    @DisplayName("퀴즈 추가 시 무결성 위반된 값을 넣으면 서버에서 상태코드 404을 받는다.")
-    public void 무결성위반CreateQuiz() throws Exception {
-        String token = this.로그인토큰("user", "password");
-        RequestQuiz requestQuiz = RequestQuiz.builder()
-                .quizContents("내용")
-                .quizAnswer("choice1")
-                .quizScore(5)
-                .userId(1L)
-                .categoryNum(7L)
-                .choice1("ooooooo")
                 .build();
         String json = mapper.writeValueAsString(requestQuiz);
         String URL = "/quiz";
@@ -147,13 +128,12 @@ public class QuizControllerSettingTest {
     @Test
     @DisplayName("퀴즈 업데이트 성공시 서버에서 상태코드 201(create)을 받는다.")
     public void UpdateQuiz() throws Exception {
-        String token = this.로그인토큰("user", "password");
+        String token = this.로그인토큰("admin", "admin");
         RequestQuiz requestQuiz = RequestQuiz.builder()
                 .quizNum(2L)
                 .quizContents("내용")
                 .quizAnswer("choice1")
                 .quizScore(5)
-                .userId(1L)
                 .categoryNum(2L)
                 .choice1("oo")
                 .build();
@@ -172,7 +152,6 @@ public class QuizControllerSettingTest {
                 .quizContents("내용")
                 .quizAnswer("choice1")
                 .quizScore(5)
-                .userId(2L)
                 .categoryNum(2L)
                 .choice1("oo")
                 .build();
@@ -185,29 +164,10 @@ public class QuizControllerSettingTest {
     @Test
     @DisplayName("퀴즈 변경시 필수 값 누락되면 서버에서 상태코드 400을 받는다.")
     public void 필수값누락UpdateQuiz() throws Exception {
-        String token = this.로그인토큰("user", "password");
+        String token = this.로그인토큰("admin", "admin");
         RequestQuiz requestQuiz = RequestQuiz.builder()
                 .quizContents("내용")
                 .quizScore(5)
-                .userId(1L)
-                .build();
-        String json = mapper.writeValueAsString(requestQuiz);
-        String URL = "/quiz";
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.put(URL).contentType(MediaType.APPLICATION_JSON).content(json).header(HttpHeaders.AUTHORIZATION, token);
-        mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
-    }
-    @Test
-    @DisplayName("퀴즈 추가 시 foreign key에 없는 값을 넣으면 서버에서 상태코드 404을 받는다.")
-    public void 무결성위반UpdateQuiz() throws Exception {
-        String token = this.로그인토큰("user", "password");
-        RequestQuiz requestQuiz = RequestQuiz.builder()
-                .quizNum(2L)
-                .quizContents("내용")
-                .quizAnswer("choice1")
-                .quizScore(5)
-                .userId(5L)
-                .categoryNum(5L)
-                .choice1("oo")
                 .build();
         String json = mapper.writeValueAsString(requestQuiz);
         String URL = "/quiz";
@@ -218,13 +178,12 @@ public class QuizControllerSettingTest {
     @Test
     @DisplayName("변경할 퀴즈가 존재하지 않으면 서버에서 상태코드 404을 받는다.")
     public void IdNotExistUpdateQuiz() throws Exception {
-        String token = this.로그인토큰("user", "password");
+        String token = this.로그인토큰("admin", "admin");
         RequestQuiz requestQuiz = RequestQuiz.builder()
                 .quizNum(7L)
                 .quizContents("내용")
                 .quizAnswer("choice1")
                 .quizScore(5)
-                .userId(1L)
                 .categoryNum(2L)
                 .choice1("o")
                 .build();
@@ -232,5 +191,24 @@ public class QuizControllerSettingTest {
         String URL = "/quiz";
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put(URL).contentType(MediaType.APPLICATION_JSON).content(json).header(HttpHeaders.AUTHORIZATION, token);
         mockMvc.perform(requestBuilder).andExpect(status().is4xxClientError()).andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("권한 없는 사용자가 퀴즈 삭제 시, 서버에서 상태코드 203(정보권한없음)을 받는다.")
+    public void InvalidDeleteQuiz() throws Exception {
+        String token = this.로그인토큰("user", "password");
+        String URL = "/quiz/2";
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
+        mockMvc.perform(requestBuilder).andExpect(status().isNonAuthoritativeInformation()).andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("작성자만 삭제 가능하고 서버에서 상태코드 200을 받는다.")
+    public void DeleteQuiz() throws Exception {
+        String token = this.로그인토큰("admin", "admin");
+
+        String URL = "/quiz/1";
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(URL).header(HttpHeaders.AUTHORIZATION, token);
+        mockMvc.perform(requestBuilder).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
     }
 }

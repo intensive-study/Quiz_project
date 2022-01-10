@@ -12,6 +12,7 @@ import com.example.demo.jpa.CategoryRepository;
 import com.example.demo.jpa.QuizDetailRepository;
 import com.example.demo.jpa.QuizRepository;
 import com.example.demo.jpa.UserRepository;
+import com.example.demo.util.SecurityUtil;
 import com.example.demo.vo.RequestQuiz;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,19 +72,12 @@ public class QuizSettingServiceImpl implements QuizService {
      */
     @Override
     public CategoryEntity updateCategory(CategoryDto categoryDto) throws IdNotExistException {
-        Optional<CategoryEntity> category = categoryRepository.findById(categoryDto.getCategoryNum());
+        CategoryEntity category = categoryRepository.findById(categoryDto.getCategoryNum())
+                .orElseThrow(() -> new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST));
 
-        if(category.isEmpty()){
-            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
-        }
+        category.setCategoryName(categoryDto.getCategoryName());
 
-        category.ifPresent(c->{
-            c.setCategoryName(categoryDto.getCategoryName());
-        });
-
-        CategoryEntity result = category.get();
-
-        return result;
+        return category;
     }
 
     /**
@@ -91,11 +85,9 @@ public class QuizSettingServiceImpl implements QuizService {
      */
     @Override
     public void deleteCategory(Long categoryNum) throws IdNotExistException {
-        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(categoryNum);
+        categoryRepository.findById(categoryNum)
+                .orElseThrow(() -> new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST));
 
-        if(categoryEntity.isEmpty()){
-            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
-        }
         quizRepository.updateCategoryNull(categoryNum);
         categoryRepository.deleteById(categoryNum);
     }
@@ -112,21 +104,24 @@ public class QuizSettingServiceImpl implements QuizService {
      */
     @Override
     public QuizEntity getQuizByQuizNum(Long quizNum) throws IdNotExistException {
-        Optional<QuizEntity> quizEntity = quizRepository.findById(quizNum);
-
-        if(quizEntity.isEmpty()){
-            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
-        }
-        return quizEntity.get();
+        return quizRepository.findById(quizNum)
+                .orElseThrow(() -> new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST));
     }
     /**
      * 카테고리 별 퀴즈 조회
      */
     @Override
     public List<QuizEntity> getQuizByCategoryNum(Long requestNum) throws IdNotExistException {
-        Collection<QuizEntity> quizEntity = null;
-        if (requestNum == 0){ quizEntity = quizRepository.findByCategoryNull(); }
-        else { quizEntity = quizRepository.findByCategoryNum(requestNum); }
+        Collection<QuizEntity> quizEntity;
+
+        if (requestNum == 0){
+            quizEntity = quizRepository.findByCategoryNull();
+        }
+
+        else {
+            quizEntity = quizRepository.findByCategoryNum(requestNum);
+        }
+
         if(quizEntity.isEmpty()){
             throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
         }
@@ -139,19 +134,15 @@ public class QuizSettingServiceImpl implements QuizService {
     @Override
     public QuizEntity createQuiz(RequestQuiz quizDto) throws IdNotExistException {
         QuizEntity quiz = new ModelMapper().map(quizDto, QuizEntity.class);
+        UserEntity user = SecurityUtil.getCurrentUsername()
+                .flatMap(userRepository::findOneWithAuthoritiesByUsername)
+                .orElseThrow(() -> new IdNotExistException("user not exist", ResultCode.ID_NOT_EXIST));
 
-        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(quizDto.getCategoryNum());
-        if(categoryEntity.isEmpty()){
-            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
-        }
+        CategoryEntity category = categoryRepository.findById(quizDto.getCategoryNum())
+                .orElseThrow(() -> new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST));
 
-        Optional<UserEntity> userEntity = userRepository.findById(quizDto.getUserId());
-        if(userEntity.isEmpty()){
-            throw new IdNotExistException("user not exist", ResultCode.ID_NOT_EXIST);
-        }
-
-        quiz.setCategoryEntity(categoryEntity.get());
-        quiz.setUserEntity(userEntity.get());
+        quiz.setCategoryEntity(category);
+        quiz.setUserEntity(user);
 
         //(0, 0, 0)초기화 =>
         QuizDetailEntity quizDetail = new QuizDetailEntity(null, quiz, 0f, 0, 0);
@@ -161,6 +152,7 @@ public class QuizSettingServiceImpl implements QuizService {
 
         QuizEntity result= quizDetailEntity.getQuizEntity();
         result.setQuizDetailEntity(quizDetailEntity);
+
         return result;
     }
 
@@ -169,35 +161,31 @@ public class QuizSettingServiceImpl implements QuizService {
      */
     @Override
     public QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException {
-        // 유저정보나 카테고리 변경시 업데이트되는지 확인 or 직접 함수호출
+        QuizEntity quiz = quizRepository.findById(quizDto.getQuizNum())
+                .orElseThrow(() -> new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST));
 
-        Optional<CategoryEntity> categoryEntity = categoryRepository.findById(quizDto.getCategoryNum());
-        if(categoryEntity.isEmpty()){
-            throw new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST);
-        }
+        UserEntity user = SecurityUtil.getCurrentUsername()
+                .flatMap(userRepository::findOneWithAuthoritiesByUsername)
+                .orElseThrow(() -> new IdNotExistException("user not exist", ResultCode.ID_NOT_EXIST));
 
-        Optional<QuizEntity> quiz = quizRepository.findById(quizDto.getQuizNum());
-        if(quiz.isEmpty()){
-            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
-        }
-
-        if(quiz.get().getUserEntity().getUserId() != quizDto.getUserId()){
+        if(quiz.getUserEntity().getUserId() != user.getUserId()){
             throw new InvalidDataAccessApiUsageException("수정 권한이 없습니다.");
         }
 
-        quiz.ifPresent(Q -> {
-            Q.setCategoryEntity(categoryEntity.get());
-            Q.setQuizContents(quizDto.getQuizContents());
-            Q.setQuizAnswer(quizDto.getQuizAnswer());
-            Q.setChoice1(quizDto.getChoice1());
-            Q.setChoice2(quizDto.getChoice2());
-            Q.setChoice3(quizDto.getChoice3());
-            Q.setChoice4(quizDto.getChoice4());
-            Q.setChoice5(quizDto.getChoice5());
-            Q.setQuizScore(quizDto.getQuizScore());
-        });
+        CategoryEntity categoryEntity = categoryRepository.findById(quizDto.getCategoryNum())
+                .orElseThrow(() -> new IdNotExistException("category not exist", ResultCode.ID_NOT_EXIST));
 
-        return quiz.get();
+        quiz.setCategoryEntity(categoryEntity);
+        quiz.setQuizContents(quizDto.getQuizContents());
+        quiz.setQuizAnswer(quizDto.getQuizAnswer());
+        quiz.setChoice1(quizDto.getChoice1());
+        quiz.setChoice2(quizDto.getChoice2());
+        quiz.setChoice3(quizDto.getChoice3());
+        quiz.setChoice4(quizDto.getChoice4());
+        quiz.setChoice5(quizDto.getChoice5());
+        quiz.setQuizScore(quizDto.getQuizScore());
+
+        return quiz;
     }
 
     /**
@@ -205,15 +193,15 @@ public class QuizSettingServiceImpl implements QuizService {
      */
     @Override
     @Transactional
-    public void deleteQuiz(Long quizNum, Long userId) throws IdNotExistException {
-        Optional<QuizEntity> quiz = quizRepository.findById(quizNum);
+    public void deleteQuiz(Long quizNum) throws IdNotExistException {
+        QuizEntity quiz = quizRepository.findById(quizNum)
+                .orElseThrow(() -> new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST));
+        UserEntity user = SecurityUtil.getCurrentUsername()
+                .flatMap(userRepository::findOneWithAuthoritiesByUsername)
+                .orElseThrow(() -> new IdNotExistException("user not exist", ResultCode.ID_NOT_EXIST));
 
-        if(quiz.isEmpty()){
-            throw new IdNotExistException("quiz not exist", ResultCode.ID_NOT_EXIST);
-        }
-
-        if(quiz.get().getUserEntity().getUserId() != userId){
-            throw new InvalidDataAccessApiUsageException("수정 권한이 없습니다.");
+        if(quiz.getUserEntity().getUserId() != user.getUserId()){
+            throw new InvalidDataAccessApiUsageException("삭제 권한이 없습니다.");
         }
         quizRepository.deleteById(quizNum);
     }
