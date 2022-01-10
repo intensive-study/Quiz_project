@@ -42,7 +42,7 @@ public interface QuizService {
     QuizEntity updateQuiz(RequestQuiz quizDto) throws IdNotExistException;
     //삭제
     @Transactional
-    void deleteQuiz(Long quizNum, Long userId) throws IdNotExistException;
+    void deleteQuiz(Long quizNum) throws IdNotExistException;
 
     /**
      * 퀴즈 디테일
